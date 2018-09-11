@@ -12,7 +12,7 @@ function initialiseDeck() {
   var suits = ["S","H","D","C"];
   var deck = [];
 
-  // Build a sorted deck - S,H,D,C
+  // Build a sorted deck in suits descending order - S,H,D,C
   for(var i = 0; i < suitsQuantity; i++) {
     for(var j = 0; j < suitSize; j++) {
       card.suit = suits[i];
