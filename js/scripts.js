@@ -1,14 +1,27 @@
 function buttonPress() {
   var element = document.getElementById("sven");
   var playDeck = new Deck();
+  var playManager = new Dealer(requestPlayers());
+
   element.innerHTML = "That";
 
   playDeck.initialise();
   playDeck.printDeck();
+  playManager.dealHands();
 
   console.log(playDeck.getCard());
 }
 
+function requestPlayers() {
+  do {
+    var players = prompt("Choose a number of players, between 2 and 7!");
+    players = parseInt(players);
+    console.log("No. of players: " + players);
+  } while (players === NaN || players < 2 || players > 7);
+  return players;
+}
+
+// Manages cards
 class Deck {
   constructor() {
     this.deck = [];
@@ -19,7 +32,6 @@ class Deck {
     const SUIT_SIZE = 13;
 
     var suits = ["S","H","C","D"];
-    console.log(this.deck + " Length: " + this.deck.length);
 
     // Build a sorted deck in suits descending order - S,H,C,D
     for(var i = 0; i < SUITS_QUANTITY; i++) {
@@ -109,4 +121,40 @@ class Deck {
   // dealHands(players) {
   //   // TODO: Deal out necessary number of cards to players (7 for 2/3 players, 5 for 4/5 players)
   // }
+}
+
+// Manages interractions between cards and players
+class Dealer {
+  constructor(players) {
+    // Number of players
+    this.players = players;
+    // Can't play by yourself
+    this.MIN_PLAYERS = 2;
+    // Number of players necessary for 5 cards rather than 7 to be dealt
+    this.DEAL_THRESHOLD = 4
+    // Max 7 players for now (technically 10 can play)
+    this.MAX_PLAYERS = 7;
+  }
+
+  dealHands () {
+    if (this.players >= this.MIN_PLAYERS && this.players < this.DEAL_THRESHOLD) {
+      // TODO:  Deal 7 cards to each player
+      console.log("7 cards dealt to each player");
+    }
+    else if (this.players > this.DEAL_THRESHOLD && this.players <= this.MAX_PLAYERS) {
+      // TODO: Deal 5 cards to each player
+      console.log("5 cards dealt to each player");
+    }
+    else {
+      throw "invalidPlayerNumberException";
+    }
+  }
+
+  dealCard (player) {
+    // TODO: Give a single card to a single player
+  }
+
+  getHand (player) {
+    // TODO: Gets the cards in a players hand
+  }
 }
