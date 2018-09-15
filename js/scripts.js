@@ -57,3 +57,16 @@ function initialiseDeck() {
   console.log("Deck size: " + deck.length);
   console.log("Deck initialised");
 }
+
+function dealCard(player) {
+  // TODO: Give a single card to a designated player
+}
+
+//
+function deleteFromDeck(c) {
+  // TODO: Remove card from list of available cards
+}
+
+function dealHands(players) {
+  // TODO: Deal out necessary number of cards to players (7 for 2/3 players, 5 for 4/5 players)
+}
