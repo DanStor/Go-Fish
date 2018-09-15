@@ -73,7 +73,7 @@ class Deck {
         //     throw "invalidCardError";
         //   }
 
-        console.log(this.deck.push(card));
+        this.deck.push(card);
       }
     }
     this.shuffleDeck();
@@ -123,26 +123,38 @@ class Deck {
 class Dealer {
   constructor(players) {
     // Number of players
-    this.players = players;
+    this.playerCount = players;
     // Can't play by yourself
     this.MIN_PLAYERS = 2;
     // Number of players necessary for 5 cards rather than 7 to be dealt
     this.DEAL_THRESHOLD = 4
     // Max 7 players for now (technically 10 can play)
     this.MAX_PLAYERS = 7;
-    
+    // Array of players
+    this.players = [];
+
     this.playDeck = new Deck();
     this.playDeck.initialise();
     this.playDeck.printDeck();
-    console.log(this.playDeck.getCard());
+    // console.log(this.playDeck.getCard());
+    this.createPlayers();
+  }
+
+  createPlayers () {
+    // TODO: Create player class for each player
+    for (var i = 0; i < this.playerCount; i++) {
+      var newPlayer = new Player();
+      this.players.push(newPlayer);
+    }
+    console.log(this.players);
   }
 
   dealHands () {
-    if (this.players >= this.MIN_PLAYERS && this.players < this.DEAL_THRESHOLD) {
+    if (this.playerCount >= this.MIN_PLAYERS && this.playerCount < this.DEAL_THRESHOLD) {
       // TODO:  Deal 7 cards to each player
       console.log("7 cards dealt to each player");
     }
-    else if (this.players >= this.DEAL_THRESHOLD && this.players <= this.MAX_PLAYERS) {
+    else if (this.playerCount >= this.DEAL_THRESHOLD && this.playerCount <= this.MAX_PLAYERS) {
       // TODO: Deal 5 cards to each player
       console.log("5 cards dealt to each player");
     }
@@ -157,5 +169,24 @@ class Dealer {
 
   getHand (player) {
     // TODO: Gets the cards in a players hand
+  }
+}
+
+class Player {
+  constructor() {
+    this.hand;
+    console.log("Player created");
+  }
+
+  addCard(card) {
+    // TODO: Receive card from Dealer
+  }
+
+  checkHand(value) {
+    // TODO: Check hand to see if it has any of a particular value
+  }
+
+  sortHand() {
+    // TODO: Organise hand S,H,C,D, value ascending
   }
 }
