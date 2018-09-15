@@ -1,15 +1,11 @@
 function buttonPress() {
   var element = document.getElementById("sven");
-  var playDeck = new Deck();
+  // var playDeck = new Deck();
   var playManager = new Dealer(requestPlayers());
 
   element.innerHTML = "That";
 
-  playDeck.initialise();
-  playDeck.printDeck();
   playManager.dealHands();
-
-  console.log(playDeck.getCard());
 }
 
 function requestPlayers() {
@@ -134,6 +130,11 @@ class Dealer {
     this.DEAL_THRESHOLD = 4
     // Max 7 players for now (technically 10 can play)
     this.MAX_PLAYERS = 7;
+    
+    this.playDeck = new Deck();
+    this.playDeck.initialise();
+    this.playDeck.printDeck();
+    console.log(this.playDeck.getCard());
   }
 
   dealHands () {
