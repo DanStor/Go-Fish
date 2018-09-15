@@ -4,13 +4,13 @@ function buttonPress() {
   initialiseDeck();
 }
 
+var card = {suit: "", value: 0}
+var suits = ["S","H","D","C"];
+var deck = [];
+
 function initialiseDeck() {
   const suitsQuantity = 4;
   const suitSize = 13;
-
-  var card = {suit: "", value: 0}
-  var suits = ["S","H","D","C"];
-  var deck = [];
 
   // Build a sorted deck in suits descending order - S,H,D,C
   for(var i = 0; i < suitsQuantity; i++) {
@@ -56,6 +56,12 @@ function initialiseDeck() {
   }
   console.log("Deck size: " + deck.length);
   console.log("Deck initialised");
+}
+
+// Could randomly grab a single card from the deck rather than suffle
+// BUT a shuffled deck allows for reusable code in other card games
+function shuffleDeck() {
+  // TODO: Shuffle the deck
 }
 
 function dealCard(player) {
