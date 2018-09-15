@@ -141,7 +141,7 @@ class Dealer {
       // TODO:  Deal 7 cards to each player
       console.log("7 cards dealt to each player");
     }
-    else if (this.players > this.DEAL_THRESHOLD && this.players <= this.MAX_PLAYERS) {
+    else if (this.players >= this.DEAL_THRESHOLD && this.players <= this.MAX_PLAYERS) {
       // TODO: Deal 5 cards to each player
       console.log("5 cards dealt to each player");
     }
