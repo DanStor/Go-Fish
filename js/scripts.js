@@ -9,46 +9,44 @@ var suits = ["S","H","D","C"];
 var deck = [];
 
 function initialiseDeck() {
-  const suitsQuantity = 4;
-  const suitSize = 13;
+  const SUITS_QUANTITY = 4;
+  const SUIT_SIZE = 13;
 
   // Build a sorted deck in suits descending order - S,H,D,C
-  for(var i = 0; i < suitsQuantity; i++) {
-    for(var j = 0; j < suitSize; j++) {
+  for(var i = 0; i < SUITSQUANTITY; i++) {
+    for(var j = 0; j < SUIT_SIZE; j++) {
       card.suit = suits[i];
-      if(j < 10) {
-        card.value = (j+1).toString();
-      }
-      else {
-        // SWITCH STATEMENT THAT NEVER PRODUCES A KING...
-        // switch (j) {
-        //   case 10:
-        //     card.value = "J";
-        //     break;
-        //   case 11:
-        //     card.value = "Q";
-        //     console.log(j);
-        //     break;
-        //   case 12:
-        //     card.vaue = "K";
-        //     break;
-        //   default:
-        //     throw "invalidCardError";
-        // }
+      card.value = (j+1).toString();
 
-        if(j === 10) {
-          card.value = "J";
-        }
-        else if(j === 11) {
-          card.value = "Q";
-        }
-        else if(j === 12) {
-          card.value = "K";
-        }
-        else {
-          throw "invalidCardError";
-        }
-      }
+      //   // SWITCH STATEMENT THAT NEVER PRODUCES A KING...
+      //   // switch (j) {
+      //   //   case 10:
+      //   //     card.value = "J";
+      //   //     break;
+      //   //   case 11:
+      //   //     card.value = "Q";
+      //   //     console.log(j);
+      //   //     break;
+      //   //   case 12:
+      //   //     card.vaue = "K";
+      //   //     break;
+      //   //   default:
+      //   //     throw "invalidCardError";
+      //   // }
+      //
+      //   if(j === 10) {
+      //     card.value = "J";
+      //   }
+      //   else if(j === 11) {
+      //     card.value = "Q";
+      //   }
+      //   else if(j === 12) {
+      //     card.value = "K";
+      //   }
+      //   else {
+      //     throw "invalidCardError";
+      //   }
+
       console.log("Card: " + card.suit + card.value);
       deck.push(card);
     }
