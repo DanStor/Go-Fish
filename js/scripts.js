@@ -26,7 +26,7 @@ class Deck {
       for(var j = 0; j < SUIT_SIZE; j++) {
 
         /*
-        Objects are passed by reference in JS, therefore editing a global variable 'card' edits ALL deriviatives of card.
+        Objects are passed by reference in JS, therefore duplicating the global variable 'card' and editing it edits ALL deriviatives of card.
         Thus creating a deck of cards that are ALL THE SAME!
         Therefore variable must be instantiated each time.
         CAN YOU TELL I SPENT A LONG TIME WORKING THIS OUT?!?
