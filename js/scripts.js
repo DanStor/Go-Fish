@@ -167,8 +167,13 @@ class Dealer {
     // TODO: Give a single card to a single player
   }
 
-  getHand (player) {
-    // TODO: Gets the cards in a players hand
+  checkHand (player) {
+    // TODO: Gets the cards in a players hand and checks to see if it matches the called card
+  }
+
+  calledCard (player) {
+    var valueToFind = 0;
+    // TODO: The card a player is 'fishing' for
   }
 }
 
@@ -182,11 +187,15 @@ class Player {
     // TODO: Receive card from Dealer
   }
 
-  checkHand(value) {
-    // TODO: Check hand to see if it has any of a particular value
+  getHand(value) {
+    // TODO: Send hand to dealer
   }
 
   sortHand() {
     // TODO: Organise hand S,H,C,D, value ascending
+  }
+
+  takeTurn() {
+    // TODO: If hand empty, get card ELSE call a card
   }
 }
