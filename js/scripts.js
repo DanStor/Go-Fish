@@ -2,8 +2,8 @@ function buttonPress() {
   var element = document.getElementById("sven");
   // var playDeck = new Deck();
   var dealer = new Dealer(requestPlayers());
-
-  element.innerHTML = "That";
+  alert("Hands dealt, ready to play.\n Click to begin.");
+  dealer.playGame();
 }
 
 function requestPlayers() {
@@ -59,6 +59,7 @@ class Deck {
         //   //     throw "invalidCardError";
         //   // }
         //
+        //   OTHER FAILURE
         //   if(j === 10) {
         //     card.value = "J";
         //   }
@@ -137,11 +138,18 @@ class Dealer {
 
     this.createPlayers();
     this.dealHands();
-    console.log("Hands dealt, ready to play.");
+  }
+
+  playGame() {
+    // do {
+      for (var i = 0; i < this.players.length; i++) {
+        this.players[i].takeTurn();
+      }
+    // } while (checkWinCondition());
   }
 
   createPlayers () {
-    // TODO: Create player class for each player
+    // Create player class for each player
     for (var i = 0; i < this.playerCount; i++) {
       var newPlayer = new Player();
       this.players.push(newPlayer);
@@ -177,7 +185,6 @@ class Dealer {
   }
 
   dealCard (player) {
-    // TODO: Give a single card to a single player
     player.addCard(this.getCardFromDeck());
   }
 
@@ -188,20 +195,30 @@ class Dealer {
   calledCard (player) {
     // TODO: The card a player is 'fishing' for
   }
+
+  checkWinCondition () {
+    // If deck is empty, stop
+    if(playDeck.deck.length < 1) {
+      return false;
+    } else {
+      return true;
+    }
+    // TODO: More complicated win: count player sets, decide winner
+  }
 }
 
+// The players
 class Player {
   constructor () {
     this.hand = [];
+    this.human = false;
   }
 
   addCard (card) {
-    // TODO: Receive card from Dealer
     this.hand.push(card);
   }
 
   getHand () {
-    // TODO: Send hand to dealer
     return this.hand;
   }
 
@@ -211,5 +228,11 @@ class Player {
 
   takeTurn () {
     // TODO: If hand empty, get card ELSE call a card
+    console.log(this + " taking turn");
+    // if(this.hand.length < 1) {
+    //
+    // } else {
+    //
+    // }
   }
 }
