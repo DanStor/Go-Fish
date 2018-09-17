@@ -1,11 +1,11 @@
 function buttonPress() {
   var element = document.getElementById("sven");
   // var playDeck = new Deck();
-  var playManager = new Dealer(requestPlayers());
+  var dealer = new Dealer(requestPlayers());
 
   element.innerHTML = "That";
 
-  playManager.dealHands();
+  // dealer.dealHands();
 }
 
 function requestPlayers() {
@@ -21,6 +21,8 @@ function requestPlayers() {
 class Deck {
   constructor() {
     this.deck = [];
+    this.initialise();
+    this.printDeck();
   }
 
   initialise() {
@@ -124,20 +126,21 @@ class Dealer {
   constructor(players) {
     // Number of players
     this.playerCount = players;
+    // Array of players
+    this.players = [];
+
     // Can't play by yourself
     this.MIN_PLAYERS = 2;
     // Number of players necessary for 5 cards rather than 7 to be dealt
     this.DEAL_THRESHOLD = 4
     // Max 7 players for now (technically 10 can play)
     this.MAX_PLAYERS = 7;
-    // Array of players
-    this.players = [];
 
+    // The deck for this game
     this.playDeck = new Deck();
-    this.playDeck.initialise();
-    this.playDeck.printDeck();
-    // console.log(this.playDeck.getCard());
+
     this.createPlayers();
+    this.dealHands();
   }
 
   createPlayers () {
@@ -150,21 +153,37 @@ class Dealer {
   }
 
   dealHands () {
+    var toDeal = 0;
     if (this.playerCount >= this.MIN_PLAYERS && this.playerCount < this.DEAL_THRESHOLD) {
-      // TODO:  Deal 7 cards to each player
-      console.log("7 cards dealt to each player");
+      toDeal = 7;
+      console.log("7 cards to be dealt");
     }
     else if (this.playerCount >= this.DEAL_THRESHOLD && this.playerCount <= this.MAX_PLAYERS) {
-      // TODO: Deal 5 cards to each player
-      console.log("5 cards dealt to each player");
+      toDeal = 5;
+      console.log("5 cards dealt to be dealt");
     }
     else {
       throw "invalidPlayerNumberException";
     }
+
+    for (var i = 0; i < toDeal; i++) {
+      for (var j = 0; j < this.players.length; j++) {
+        this.dealCard(this.players[j]);
+      }
+    }
+
+    for (var i = 0; i < this.players.length; i++) {
+      console.log(this.players[i].getHand());
+    }
+  }
+
+  getCardFromDeck() {
+    return this.playDeck.getCard();
   }
 
   dealCard (player) {
     // TODO: Give a single card to a single player
+    player.addCard(this.getCardFromDeck());
   }
 
   checkHand (player) {
@@ -172,30 +191,31 @@ class Dealer {
   }
 
   calledCard (player) {
-    var valueToFind = 0;
     // TODO: The card a player is 'fishing' for
   }
 }
 
 class Player {
-  constructor() {
-    this.hand;
+  constructor () {
+    this.hand = [];
     console.log("Player created");
   }
 
-  addCard(card) {
+  addCard (card) {
     // TODO: Receive card from Dealer
+    this.hand.push(card);
   }
 
-  getHand(value) {
+  getHand () {
     // TODO: Send hand to dealer
+    return this.hand;
   }
 
-  sortHand() {
+  sortHand () {
     // TODO: Organise hand S,H,C,D, value ascending
   }
 
-  takeTurn() {
+  takeTurn () {
     // TODO: If hand empty, get card ELSE call a card
   }
 }
