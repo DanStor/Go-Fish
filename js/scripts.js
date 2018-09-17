@@ -4,15 +4,12 @@ function buttonPress() {
   var dealer = new Dealer(requestPlayers());
 
   element.innerHTML = "That";
-
-  // dealer.dealHands();
 }
 
 function requestPlayers() {
   do {
     var players = prompt("Choose a number of players, between 2 and 7!");
     players = parseInt(players);
-    console.log("No. of players: " + players);
   } while (players === NaN || players < 2 || players > 7);
   return players;
 }
@@ -103,7 +100,6 @@ class Deck {
 
   printDeck() {
       console.log(this.deck);
-      console.log("Deck size: " + this.deck.length);
   }
 
   getCard() {
@@ -157,11 +153,9 @@ class Dealer {
     var toDeal = 0;
     if (this.playerCount >= this.MIN_PLAYERS && this.playerCount < this.DEAL_THRESHOLD) {
       toDeal = 7;
-      console.log("7 cards to be dealt");
     }
     else if (this.playerCount >= this.DEAL_THRESHOLD && this.playerCount <= this.MAX_PLAYERS) {
       toDeal = 5;
-      console.log("5 cards dealt to be dealt");
     }
     else {
       throw "invalidPlayerNumberException";
@@ -199,7 +193,6 @@ class Dealer {
 class Player {
   constructor () {
     this.hand = [];
-    console.log("Player created");
   }
 
   addCard (card) {
