@@ -140,12 +140,37 @@ class Dealer {
     this.dealHands();
   }
 
+  getPlayersLength() {
+    return this.players.length;
+  }
+
+  // Gameplay cycle runs here after setup
   playGame() {
     // do {
+      // For each player:
       for (var i = 0; i < this.players.length; i++) {
-        this.players[i].takeTurn();
+        // If the player has no cards, draw a card
+        if(!this.players[i].takeTurn()) {
+          dealCard(this.players[i]);
+        // Else pick a card and player to fish
+        } else {
+          // An array containing:
+          // [0] = direct reference to a card
+          // [1] = index of a player
+          var cardAndPlayerInt = this.players[i].callCardAndPlayer(this.players.length);
+
+          // An array containing:
+          // [0] = direct reference to a card
+          // [1] = direct reference to a player (from index)
+          var cardAndPlayerReference = [cardAndPlayerInt[0], this.players[cardAndPlayerInt[1]]];
+          this.findCardInPlayer(cardAndPlayerReference);
+        }
       }
     // } while (checkWinCondition());
+  }
+
+  findCardInPlayer(cardAndPlayer) {
+    console.log("Finding: " + cardAndPlayer);
   }
 
   createPlayers () {
@@ -154,6 +179,7 @@ class Dealer {
       var newPlayer = new Player();
       this.players.push(newPlayer);
     }
+    this.playerNum = this.players.length;
     console.log(this.players);
   }
 
@@ -192,10 +218,6 @@ class Dealer {
     // TODO: Gets the cards in a players hand and checks to see if it matches the called card
   }
 
-  calledCard (player) {
-    // TODO: The card a player is 'fishing' for
-  }
-
   checkWinCondition () {
     // If deck is empty, stop
     if(playDeck.deck.length < 1) {
@@ -229,10 +251,21 @@ class Player {
   takeTurn () {
     // TODO: If hand empty, get card ELSE call a card
     console.log(this + " taking turn");
-    // if(this.hand.length < 1) {
-    //
-    // } else {
-    //
-    // }
+    if(this.hand.length < 1) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  // Takes: total number of players from Dealer
+  // Returns:
+  // A card to find
+  // An integer value for the player to 'fish' from
+  callCardAndPlayer (playerTot) {
+    // TODO: The card this player is 'fishing' for
+    var rand1 = Math.floor(Math.random() * this.hand.length);
+    var rand2 = Math.floor(Math.random() * playerTot);
+    return [this.hand[rand1], rand2];
   }
 }
