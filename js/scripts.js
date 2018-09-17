@@ -141,6 +141,7 @@ class Dealer {
 
     this.createPlayers();
     this.dealHands();
+    console.log("Hands dealt, ready to play.");
   }
 
   createPlayers () {
