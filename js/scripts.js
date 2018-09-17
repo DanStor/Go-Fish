@@ -149,35 +149,57 @@ class Dealer {
     // do {
       // For each player:
       for (var i = 0; i < this.players.length; i++) {
+        var playerTakingTurn = this.players[i];
         // If the player has no cards, draw a card
-        if(!this.players[i].takeTurn()) {
-          dealCard(this.players[i]);
+        if(!playerTakingTurn.takeTurn()) {
+          dealCard(playerTakingTurn);
         // Else pick a card and player to fish
         } else {
           // An array containing:
           // [0] = direct reference to a card
           // [1] = index of a player
-          var cardAndPlayerInt = this.players[i].callCardAndPlayer(this.players.length);
+          var cardAndPlayerInt = playerTakingTurn.callCardAndPlayer(this.players.length);
 
-          // An array containing:
-          // [0] = direct reference to a card
-          // [1] = direct reference to a player (from index)
-          var cardAndPlayerReference = [cardAndPlayerInt[0], this.players[cardAndPlayerInt[1]]];
-          this.findCardInPlayer(cardAndPlayerReference);
+          // Direct reference to a card
+          var cardToFind = cardAndPlayerInt[0];
+          // Direct reference to a player (from index)
+          var playerToFish = this.players[cardAndPlayerInt[1]];
+          console.log("Fishing from:");
+          console.log(playerToFish);
+
+          // Array of index values point to search matches
+          var matchingValueIndicies = this.findCardInPlayer(cardToFind, playerToFish);
+
         }
       }
     // } while (checkWinCondition());
   }
 
-  findCardInPlayer(cardAndPlayer) {
-    console.log("Finding: " + cardAndPlayer);
+  findCardInPlayer(card, opponent) {
+    console.log("Fishing value " + card.value + " from player " + opponent.id);
+    var cardsOfMatchingValue = [];
+
+    // For each card in oppenent's hand
+    for (var i = 0; i < opponent.hand.length; i++) {
+      // If card value matches value searched for
+      if(opponent.hand[i].value === card.value) {
+        console.log("Card found!");
+        // Add index to cardsOfMatchingValue
+        cardsOfMatchingValue.push(i);
+      }
+    }
+
+    console.log(cardsOfMatchingValue);
+    return cardsOfMatchingValue;
   }
 
   createPlayers () {
     // Create player class for each player
     for (var i = 0; i < this.playerCount; i++) {
       var newPlayer = new Player();
+      newPlayer.id = i+1;
       this.players.push(newPlayer);
+      console.log(newPlayer);
     }
     this.playerNum = this.players.length;
     console.log(this.players);
@@ -227,11 +249,16 @@ class Dealer {
     }
     // TODO: More complicated win: count player sets, decide winner
   }
+
+  passCard (card, player) {
+    // TODO: Takes a card and passes it to a player
+  }
 }
 
 // The players
 class Player {
   constructor () {
+    this.id = 0;
     this.hand = [];
     this.human = false;
   }
@@ -244,13 +271,17 @@ class Player {
     return this.hand;
   }
 
+  removeCard (index) {
+    console.log("Removing card at index " + index + " from player " + this.id);
+  }
+
   sortHand () {
     // TODO: Organise hand S,H,C,D, value ascending
   }
 
   takeTurn () {
     // TODO: If hand empty, get card ELSE call a card
-    console.log(this + " taking turn");
+    console.log("Player " + this.id + " taking turn");
     if(this.hand.length < 1) {
       return false;
     } else {
@@ -263,9 +294,12 @@ class Player {
   // A card to find
   // An integer value for the player to 'fish' from
   callCardAndPlayer (playerTot) {
-    // TODO: The card this player is 'fishing' for
-    var rand1 = Math.floor(Math.random() * this.hand.length);
-    var rand2 = Math.floor(Math.random() * playerTot);
+    // Randomly generated values for the player and card value being fished
+    do {
+      var rand1 = Math.floor(Math.random() * this.hand.length);
+      var rand2 = Math.floor(Math.random() * playerTot);
+    } while (rand2 === this.id-1);
+
     return [this.hand[rand1], rand2];
   }
 }
