@@ -22,6 +22,7 @@ class Deck {
     this.printDeck();
   }
 
+  // Build and shuffle standard deck of 52 cards
   initialise() {
     const SUITS_QUANTITY = 4;
     const SUIT_SIZE = 13;
@@ -107,7 +108,7 @@ class Deck {
     return this.deck.pop();
   }
 
-  //
+  // .pop in getCard does this job
   deleteFromDeck(c) {
     // TODO: Remove card from list of available cards
   }
@@ -140,8 +141,46 @@ class Dealer {
     this.dealHands();
   }
 
-  getPlayersLength() {
-    return this.players.length;
+  // Create necessary number of player objects
+  createPlayers () {
+    // Create player class for each player
+    for (var i = 0; i < this.playerCount; i++) {
+      var newPlayer = new Player();
+      newPlayer.id = i+1;
+      this.players.push(newPlayer);
+      console.log(newPlayer);
+    }
+    this.playerNum = this.players.length;
+    console.log(this.players);
+  }
+
+  // Deal hand of correct size to each player
+  dealHands () {
+    var toDeal = 0;
+    if (this.playerCount >= this.MIN_PLAYERS && this.playerCount < this.DEAL_THRESHOLD) {
+      toDeal = 7;
+    }
+    else if (this.playerCount >= this.DEAL_THRESHOLD && this.playerCount <= this.MAX_PLAYERS) {
+      toDeal = 5;
+    }
+    else {
+      throw "invalidPlayerNumberException";
+    }
+
+    for (var i = 0; i < toDeal; i++) {
+      for (var j = 0; j < this.players.length; j++) {
+        this.dealCard(this.players[j]);
+      }
+    }
+
+    for (var i = 0; i < this.players.length; i++) {
+      console.log(this.players[i].getHand());
+    }
+  }
+
+  // Send a single card from the deck to a player
+  dealCard (player) {
+    player.addCard(this.getCardFromDeck());
   }
 
   // Gameplay cycle runs here after setup
@@ -175,6 +214,7 @@ class Dealer {
     // } while (checkWinCondition());
   }
 
+  // Takes a player's hand and searches for a specific card value. Returns array of matching cards
   findCardInPlayer(card, opponent) {
     console.log("Fishing value " + card.value + " from player " + opponent.id);
     var cardsOfMatchingValue = [];
@@ -193,53 +233,16 @@ class Dealer {
     return cardsOfMatchingValue;
   }
 
-  createPlayers () {
-    // Create player class for each player
-    for (var i = 0; i < this.playerCount; i++) {
-      var newPlayer = new Player();
-      newPlayer.id = i+1;
-      this.players.push(newPlayer);
-      console.log(newPlayer);
-    }
-    this.playerNum = this.players.length;
-    console.log(this.players);
-  }
-
-  dealHands () {
-    var toDeal = 0;
-    if (this.playerCount >= this.MIN_PLAYERS && this.playerCount < this.DEAL_THRESHOLD) {
-      toDeal = 7;
-    }
-    else if (this.playerCount >= this.DEAL_THRESHOLD && this.playerCount <= this.MAX_PLAYERS) {
-      toDeal = 5;
-    }
-    else {
-      throw "invalidPlayerNumberException";
-    }
-
-    for (var i = 0; i < toDeal; i++) {
-      for (var j = 0; j < this.players.length; j++) {
-        this.dealCard(this.players[j]);
-      }
-    }
-
-    for (var i = 0; i < this.players.length; i++) {
-      console.log(this.players[i].getHand());
-    }
-  }
-
+  // Returns a card from the deck
   getCardFromDeck() {
     return this.playDeck.getCard();
   }
 
-  dealCard (player) {
-    player.addCard(this.getCardFromDeck());
-  }
-
-  checkHand (player) {
-    // TODO: Gets the cards in a players hand and checks to see if it matches the called card
-  }
-
+  // Checks if all cards have left deck
+  // If true
+  // Checks if all sets are down
+  // If true
+  // Player with most sets wins
   checkWinCondition () {
     // If deck is empty, stop
     if(playDeck.deck.length < 1) {
@@ -253,36 +256,51 @@ class Dealer {
   passCard (card, player) {
     // TODO: Takes a card and passes it to a player
   }
+
+  // Returns length of players array
+  getPlayersLength() {
+    return this.players.length;
+  }
 }
 
 // The players
 class Player {
   constructor () {
+    // Player id (index 1)
     this.id = 0;
+    // Array of cards in hand
     this.hand = [];
+    // Is this player controlled by a human?
     this.human = false;
   }
 
+  // Add card to hand
   addCard (card) {
     this.hand.push(card);
   }
 
+  // Returns player hand
   getHand () {
     return this.hand;
   }
 
+  // Removes card from hand
+  // RETURN the removed card
   removeCard (index) {
     console.log("Removing card at index " + index + " from player " + this.id);
   }
 
+  // Organise hand S,H,C,D, value ascending
   sortHand () {
     // TODO: Organise hand S,H,C,D, value ascending
   }
 
+  // If hand empty, get card ELSE call a card
   takeTurn () {
     // TODO: If hand empty, get card ELSE call a card
     console.log("Player " + this.id + " taking turn");
     if(this.hand.length < 1) {
+      console.log("Empty hand, drawing card");
       return false;
     } else {
       return true;
