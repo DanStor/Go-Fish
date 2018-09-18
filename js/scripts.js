@@ -326,7 +326,7 @@ class Player {
   // Add card to hand
   addCard (card) {
     this.hand.push(card);
-    // this.sortHand();
+    this.sortHand();
   }
 
   // Returns player hand
@@ -362,54 +362,8 @@ class Player {
 
   // Organise hand S,H,C,D, value ascending
   sortHand () {
-    // TODO: Organise hand S,H,C,D, value ascending
-    // Arrays for spades, hearts, clubs and diamonds
-    var s = [];
-    var h = [];
-    var c = [];
-    var d = [];
-
-    for (var i = 0; i < this.hand.length; i++) {
-      switch (this.hand[i].suit) {
-        case "S":
-          s.push(this.hand[i].suit);
-          // if(checkSize(s)) {
-          //   s.sort(function(a,b){return b.value - a.value});
-          // }
-          break;
-        case "H":
-          h.push(this.hand[i].suit);
-          // if(checkSize(h)) {
-          //   h.sort(function(a,b){return b.value - a.value});
-          // }
-          break;
-        case "C":
-          c.push(this.hand[i].suit);
-          // if(checkSize(c)) {
-          //   c.sort(function(a,b){return b.value - a.value});
-          // }
-          break;
-        case "D":
-          d.push(this.hand[i].suit);
-          // if(checkSize(d)) {
-          //   d.sort(function(a,b){return b.value - a.value});
-          // }
-          break;
-        default:
-          throw "invalidSuitException";
-      }
-    }
-
-    var newHand = s+h+c+d;
+    this.hand.sort(function (a,b) {return a.value - b.value});
     console.log(this.getHand());
-    return newHand;
-
-    function checkSize(array) {
-      if(array.length > 1) {
-        return true;
-      }
-      return false;
-    }
   }
 
   // If hand empty, get card ELSE call a card
