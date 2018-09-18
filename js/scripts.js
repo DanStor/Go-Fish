@@ -6,7 +6,7 @@ function buttonPress() {
   dealer.playGame();
 }
 
-// Commit stuff
+// Get number of players
 function requestPlayers() {
   do {
     var players = prompt("Choose a number of players, between 2 and 7!");
@@ -181,20 +181,29 @@ class Dealer {
 
   // Send a single card from the deck to a player
   dealCard (player) {
-    player.addCard(this.getCardFromDeck());
+    if(this.playDeck.length < 1) {
+      return false
+    } else {
+      player.addCard(this.getCardFromDeck());
+    }
+    return true;
   }
 
   // Gameplay cycle runs here after setup
   playGame() {
-    // do {
+    do {
       // For each player:
       for (var i = 0; i < this.players.length; i++) {
         var playerTakingTurn = this.players[i];
 
         // If the player has no cards, draw a card
         if(!playerTakingTurn.takeTurn()) {
-          dealCard(playerTakingTurn);
-
+          // If player cannot draw a card because deck is empty
+          if(!dealCard(playerTakingTurn)) {
+            // Skip player, there is nothing else they can do
+            console.log("DECK EMPTY");
+            continue;
+          }
         // Else pick a card and player to fish
         } else {
           // An array containing:
@@ -217,14 +226,15 @@ class Dealer {
           console.log(matchingValueIndicies);
           console.log("Length of values array: " + matchingValueIndicies.length);
 
+          // If no matches
           if(matchingValueIndicies.length < 1) {
             console.log("GO FISH!");
             this.dealCard(playerTakingTurn);
             continue;
           }
 
+          // Cards to pass to fishing player
           var cardsToPass = playerToFish.removeCards(matchingValueIndicies);
-
           for (var j = 0; j < cardsToPass.length; j++) {
             playerTakingTurn.addCard(cardsToPass[j]);
           }
@@ -246,7 +256,9 @@ class Dealer {
         console.log(this.players[i].hand);
       }
       console.log(this.playDeck);
-    // } while (checkWinCondition());
+    } while (this.checkWinCondition());
+
+    console.log("GAME OVER!");
   }
 
   // TAKE a player's hand and searches for a specific card value.
@@ -279,7 +291,7 @@ class Dealer {
   // Player with most sets wins
   checkWinCondition () {
     // If deck is empty, stop
-    if(playDeck.deck.length < 1) {
+    if(this.playDeck.deck.length < 1) {
       return false;
     } else {
       return true;
@@ -307,11 +319,14 @@ class Player {
     this.hand = [];
     // Is this player controlled by a human?
     this.human = false;
+    // An array of the sets a player has
+    this.sets = [];
   }
 
   // Add card to hand
   addCard (card) {
     this.hand.push(card);
+    // this.sortHand();
   }
 
   // Returns player hand
@@ -348,6 +363,53 @@ class Player {
   // Organise hand S,H,C,D, value ascending
   sortHand () {
     // TODO: Organise hand S,H,C,D, value ascending
+    // Arrays for spades, hearts, clubs and diamonds
+    var s = [];
+    var h = [];
+    var c = [];
+    var d = [];
+
+    for (var i = 0; i < this.hand.length; i++) {
+      switch (this.hand[i].suit) {
+        case "S":
+          s.push(this.hand[i].suit);
+          // if(checkSize(s)) {
+          //   s.sort(function(a,b){return b.value - a.value});
+          // }
+          break;
+        case "H":
+          h.push(this.hand[i].suit);
+          // if(checkSize(h)) {
+          //   h.sort(function(a,b){return b.value - a.value});
+          // }
+          break;
+        case "C":
+          c.push(this.hand[i].suit);
+          // if(checkSize(c)) {
+          //   c.sort(function(a,b){return b.value - a.value});
+          // }
+          break;
+        case "D":
+          d.push(this.hand[i].suit);
+          // if(checkSize(d)) {
+          //   d.sort(function(a,b){return b.value - a.value});
+          // }
+          break;
+        default:
+          throw "invalidSuitException";
+      }
+    }
+
+    var newHand = s+h+c+d;
+    console.log(this.getHand());
+    return newHand;
+
+    function checkSize(array) {
+      if(array.length > 1) {
+        return true;
+      }
+      return false;
+    }
   }
 
   // If hand empty, get card ELSE call a card
@@ -375,5 +437,11 @@ class Player {
     } while (rand2 === this.id-1);
 
     return [this.hand[rand1], rand2];
+  }
+
+  checkHand() {
+    // for (var i = 0; i < this.hand.length; i++) {
+    //   this.hand[i]
+    // }
   }
 }
