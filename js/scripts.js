@@ -119,7 +119,7 @@ class Deck {
   // }
 }
 
-// Manages interractions between cards and players
+// Manages interractions between deck and players
 class Dealer {
   constructor(players) {
     // Number of players
@@ -189,9 +189,11 @@ class Dealer {
       // For each player:
       for (var i = 0; i < this.players.length; i++) {
         var playerTakingTurn = this.players[i];
+
         // If the player has no cards, draw a card
         if(!playerTakingTurn.takeTurn()) {
           dealCard(playerTakingTurn);
+
         // Else pick a card and player to fish
         } else {
           // An array containing:
@@ -201,20 +203,53 @@ class Dealer {
 
           // Direct reference to a card
           var cardToFind = cardAndPlayerInt[0];
+
           // Direct reference to a player (from index)
           var playerToFish = this.players[cardAndPlayerInt[1]];
+
           console.log("Fishing from:");
           console.log(playerToFish);
 
           // Array of index values point to search matches
           var matchingValueIndicies = this.findCardInPlayer(cardToFind, playerToFish);
 
+          console.log(matchingValueIndicies);
+          console.log("Length of values array: " + matchingValueIndicies.length);
+
+          if(matchingValueIndicies.length < 1) {
+            console.log("GO FISH!");
+            this.dealCard(playerTakingTurn);
+            continue;
+          }
+
+          var cardsToPass = playerToFish.removeCards(matchingValueIndicies);
+
+          for (var j = 0; j < cardsToPass.length; j++) {
+            playerTakingTurn.addCard(cardsToPass[j]);
+          }
+
+          console.log(playerTakingTurn.getHand());
+
+          // For each matching card value
+          // for (var j = 0; j < matchingValueIndicies.length; j++) {
+          //   // console.log(matchingValueIndicies[i]);
+          //   // Pass the removed card to the calling player
+          //   var removedCard = playerToFish.removeCard(matchingValueIndicies[j]);
+          //   console.log("Removed card value: " + removedCard.value);
+          // }
         }
       }
+
+      for (var i = 0; i < this.players.length; i++) {
+        console.log("Player " + this.players[i].id + " hand: ");
+        console.log(this.players[i].hand);
+      }
+      console.log(this.playDeck);
     // } while (checkWinCondition());
   }
 
-  // Takes a player's hand and searches for a specific card value. Returns array of matching cards
+  // TAKE a player's hand and searches for a specific card value.
+  // RETURN array of matching cards
   findCardInPlayer(card, opponent) {
     console.log("Fishing value " + card.value + " from player " + opponent.id);
     var cardsOfMatchingValue = [];
@@ -228,8 +263,6 @@ class Dealer {
         cardsOfMatchingValue.push(i);
       }
     }
-
-    console.log(cardsOfMatchingValue);
     return cardsOfMatchingValue;
   }
 
@@ -253,8 +286,9 @@ class Dealer {
     // TODO: More complicated win: count player sets, decide winner
   }
 
-  passCard (card, player) {
-    // TODO: Takes a card and passes it to a player
+  // Takes array of cards and passes it to a player
+  passCards (cards, player) {
+    // TODO: Takes array of cards and passes it to a player
   }
 
   // Returns length of players array
@@ -284,10 +318,30 @@ class Player {
     return this.hand;
   }
 
-  // Removes card from hand
-  // RETURN the removed card
-  removeCard (index) {
-    console.log("Removing card at index " + index + " from player " + this.id);
+  // Removes cards from hand by interating from end to beginning
+  // This avoids incorrect references after splice
+  // RETURN the removed cards
+  removeCards (indexArray) {
+    var returningCards = [];
+    for (var i = (indexArray.length - 1); i >= 0; i--) {
+      console.log("Removing card at index " + indexArray[i] + " from player " + this.id);
+
+      // Capture card in singlecard variable
+      var singleCard = this.hand[indexArray[i]];
+
+      // Delete card from array
+      this.hand.splice(indexArray[i], 1);
+      console.log(singleCard);
+
+      // Push singleCard to returningCards array
+      returningCards.push(singleCard);
+    }
+    for (var i = 0; i < returningCards.length; i++) {
+      console.log("Value of removed cards: " + returningCards[i].value);
+    }
+    console.log(this.hand);
+    console.log(returningCards);
+    return returningCards;
   }
 
   // Organise hand S,H,C,D, value ascending
@@ -300,9 +354,10 @@ class Player {
     // TODO: If hand empty, get card ELSE call a card
     console.log("Player " + this.id + " taking turn");
     if(this.hand.length < 1) {
-      console.log("Empty hand, drawing card");
+      console.log("Empty hand");
       return false;
     } else {
+      console.log(this.id + " has cards in hand");
       return true;
     }
   }
