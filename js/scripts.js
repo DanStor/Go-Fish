@@ -6,6 +6,7 @@ function buttonPress() {
   dealer.playGame();
 }
 
+// Commit stuff
 function requestPlayers() {
   do {
     var players = prompt("Choose a number of players, between 2 and 7!");
