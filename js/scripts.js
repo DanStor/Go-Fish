@@ -6,6 +6,8 @@ function buttonPress() {
   dealer.playGame();
 }
 
+
+
 // Get number of players
 function requestPlayers() {
   do {
