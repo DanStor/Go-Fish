@@ -6,16 +6,28 @@
     <link rel="stylesheet" href="../css/master.css">
   </head>
   <body>
-    <div class="container intro">
+    <div class="container center">
       <h1>Let's Play Go Fish!</h1>
       <h2 id="sven">This</h2>
-      <button id="startButton" type="button"></button>
-      <button id="makeCard" type="button"></button>
+      <button id="startButton" type="button">Start Game</button>
+      <button id="makeCard" type="button">Make Card</button>
+      <button id="drawCard" type="button">Draw Card</button>
       <h2>Your Cards</h2>
     </div>
-    <div class="container-fluid" id="cardContainer">
+
+    <div class="container-fluid center" id="cardContainer">
       <img class="card" src="../images/cardsjpg/AS.jpg" alt="A card">
       <img class="card" src="../images/cardsjpg/AH.jpg" alt="A card">
+      <img class="card" src="../images/cardsjpg/AC.jpg" alt="A card">
+      <img class="card" src="../images/cardsjpg/AD.jpg" alt="A card">
+    </div>
+
+    <div class="container center" id="opponents">
+      <button id="p2" type="button">Player 2</button>
+      <button id="p3" type="button">Player 3</button>
+      <button id="p4" type="button">Player 4</button>
+      <button id="p5" type="button">Player 5</button>
+      <button id="p6" type="button">Player 6</button>
     </div>
     <div class="scripts">
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

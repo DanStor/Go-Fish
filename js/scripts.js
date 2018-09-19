@@ -1,10 +1,16 @@
 $(document).ready(function () {
   $("#startButton").click(buttonPress);
-  $("#makeCard").click(makeCard)
+  $("#makeCard").click(makeCard);
+  $("#drawCard").click(drawCard);
   $("#cardContainer").on("click", ".card", function () {
     cardPress(this);
   });
 });
+
+function drawCard() {
+  // TODO: Draw a card
+  console.log("Card drawn");
+}
 
 function makeCard() {
   $("#cardContainer").append("<img class=\"card\" src=\"../images/cardsjpg/AC.jpg\" alt=\"A card\">");
@@ -202,7 +208,7 @@ class Dealer {
     for (var i = 0; i < this.playerCount; i++) {
       var newPlayer = new Player();
       newPlayer.id = i+1;
-      if (i === 0) {
+      if (i === (this.playerCount - 1)) {
         newPlayer.setHuman();
       }
       this.players.push(newPlayer);
@@ -254,8 +260,14 @@ class Dealer {
         console.log("DECK SIZE AT TURN START: " + this.playDeck.deck.length);
         var playerTakingTurn = this.players[i];
 
+        var canTakeTurn = playerTakingTurn.takeTurn();
+
+        if (canTakeTurn === 2) {
+          console.log("HUMAN TAKES A TURN");
+        }
+
         // If the player has no cards, draw a card
-        if(!playerTakingTurn.takeTurn()) {
+        if(canTakeTurn === 0) {
           // If player cannot draw a card because deck is empty
           if(!this.dealCard(playerTakingTurn)) {
             // Skip player, there is nothing else they can do
@@ -411,6 +423,8 @@ class Player {
     this.human = false;
     // An array of the sets a player has
     this.sets = [];
+    // Human controller
+    this.humanController;
   }
 
   // Add card to hand
@@ -426,6 +440,7 @@ class Player {
 
   setHuman () {
     this.human = true;
+    this.humanController = new Human(this);
   }
 
   // TAKES array of index values for cards to remove
@@ -457,25 +472,25 @@ class Player {
 
   // If hand empty, get card ELSE call a card
   takeTurn () {
-    if(!this.human) {
+    if(this.human) {
+      // TODO: REPLACE PLACEHOLDER WITH REAL HUMAN INTERRACTION
+      console.log("HUMAN TURN!");
       console.log("Player " + this.id + " taking turn");
       if(this.hand.length < 1) {
         console.log("Empty hand");
-        return false;
+        return 0;
       } else {
         console.log(this.id + " has cards in hand");
-        return true;
+        return 2;
       }
     } else {
-      console.log("HUMAN TURN!");
-      // TODO: REPLACE PLACEHOLDER WITH REAL HUMAN INTERRACTION
       console.log("Player " + this.id + " taking turn");
       if(this.hand.length < 1) {
         console.log("Empty hand");
-        return false;
+        return 0;
       } else {
         console.log(this.id + " has cards in hand");
-        return true;
+        return 1;
       }
     }
   }
@@ -498,6 +513,9 @@ class Player {
   sortHand () {
     this.hand.sort(function (a,b) {return a.value - b.value});
     console.log(this.getHand());
+    if(this.human) {
+      this.humanController.populateCardContainer(this.getHand());
+    }
     this.checkHand();
   }
 
@@ -536,5 +554,34 @@ class Player {
 
   getSets() {
     return this.sets;
+  }
+}
+
+class Human {
+  constructor() {
+    this.cardContainer;
+  }
+
+  setCardContainer() {
+    this.cardContainer = $("#cardContainer");
+  }
+
+  populateCardContainer(hand) {
+    this.clearBoard();
+    var cardCount = 0;
+    for (var i = 0; i < hand.length; i++) {
+      cardCount++;
+      this.addCardToContainer(hand[i]);
+    }
+    console.log("Cards to display: " + cardCount);
+    // alert("Cards added. Press to continue.");
+  }
+
+  clearBoard() {
+    var cardContainer = $("#cardContainer").empty();
+  }
+
+  addCardToContainer(card) {
+    $("#cardContainer").append("<img class=\"card\" src=\"" + card.image + "\" alt=\"A card\">");
   }
 }
