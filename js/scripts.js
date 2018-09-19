@@ -422,6 +422,7 @@ class Player {
       } else {
         console.log(this.id + " has cards in hand");
         return true;
+      }
     }
   }
 
