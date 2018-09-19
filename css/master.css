@@ -1,5 +1,14 @@
+/* *{
+  border: 1px solid red;
+} */
+
 .intro {
   /* display: block; */
   text-align: center;
   /* justify-content: center; */
+}
+
+.card {
+  width: 100px;
+  justify-content: space-around;
 }

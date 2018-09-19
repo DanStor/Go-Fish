@@ -1,6 +1,20 @@
 $(document).ready(function () {
   $("#startButton").click(buttonPress);
-})
+  $("#makeCard").click(makeCard)
+  $("#cardContainer").on("click", ".card", function () {
+    cardPress(this);
+  });
+});
+
+function makeCard() {
+  $("#cardContainer").append("<img class=\"card\" src=\"../images/cardsjpg/AC.jpg\" alt=\"A card\">");
+}
+
+function cardPress(press) {
+  console.log("Card clicked");
+  var source = $(press).attr('src');
+  console.log(source);
+}
 
 function buttonPress() {
   var element = document.getElementById("sven");
