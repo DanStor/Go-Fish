@@ -1,3 +1,7 @@
+$(document).ready(function () {
+  $("#startButton").click(buttonPress);
+})
+
 function buttonPress() {
   var element = document.getElementById("sven");
   // var playDeck = new Deck();
@@ -5,8 +9,6 @@ function buttonPress() {
   alert("Hands dealt, ready to play.\n Click to begin.");
   dealer.playGame();
 }
-
-
 
 // Get number of players
 function requestPlayers() {
@@ -43,10 +45,46 @@ class Deck {
         CAN YOU TELL I SPENT A LONG TIME WORKING THIS OUT?!?
         */
 
-        var card = {suit: "", value : 0};
+        var card = {suit: 0, value: 0, image: ""};
         card.suit = suits[i];
         card.value = (j+1);
+        // Apply reference to corresponding card image:
+        // ../images/cardsjpg/card.image.jpg
+        var imageRef = "";
+        switch (card.value) {
+          case 11:
+            imageRef += "J";
+            break;
+          case 12:
+            imageRef += "Q";
+            break;
+          case 13:
+            imageRef += "K";
+            break;
+          case 1:
+            imageRef += "A";
+            break;
+          default:
+            imageRef += String(card.value);
+        }
 
+        switch (card.suit) {
+          case 4:
+            imageRef += "S";
+            break;
+          case 3:
+            imageRef += "H";
+            break;
+          case 2:
+            imageRef += "C";
+            break;
+          case 1:
+            imageRef += "D";
+            break;
+          default:
+            imageRef += "HELP I DON'T HAVE A SUIT!"
+        }
+        card.image = "../images/cardsjpg/" + imageRef + ".jpg";
         //   // SWITCH STATEMENT THAT NEVER PRODUCES A KING...
         //   // switch (j) {
         //   //   case 10:
@@ -405,7 +443,7 @@ class Player {
 
   // If hand empty, get card ELSE call a card
   takeTurn () {
-    if(!human) {
+    if(!this.human) {
       console.log("Player " + this.id + " taking turn");
       if(this.hand.length < 1) {
         console.log("Empty hand");
