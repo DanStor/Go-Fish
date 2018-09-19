@@ -278,23 +278,6 @@ class Dealer {
 
       console.log("Player " + this.players[i].id + " has " + this.players[i].getNumSets() + " sets.");
     }
-    // 
-    // if(winnersArray.length > 1) {
-    //   console.log("Winners array: " + winnersArray);
-    //   var winnerValue = 0;
-    //   for (var i = 0; i < winnersArray.length; i++) {
-    //     var setsValue = 0;
-    //     for (var j = 0; j < this.players[winnersArray[i]].getNumSets(); j++) {
-    //       setsValue += this.players[winnersArray[i]].getSets()[j];
-    //     }
-    //     console.log("PLAYER " + this.players[winnersArray[i]].id + " HAS A SET VALUE OF: " + setsValue);
-    //
-    //     if(setsValue > winnerValue) {
-    //       winnerValue = setsValue;
-    //       winnersArray = [this.players[winnersArray[i]].id];
-    //     }
-    //   }
-    // }
 
     for (var i = 0; i < winnersArray.length; i++) {
       console.log("PLAYER " + this.players[winnersArray[i]].id + " WINS!");
