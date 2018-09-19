@@ -28,7 +28,7 @@ class Deck {
     const SUITS_QUANTITY = 4;
     const SUIT_SIZE = 13;
 
-    var suits = ["S","H","C","D"];
+    var suits = [4,3,2,1];
 
     // Build a sorted deck in suits descending order - S,H,C,D
     for(var i = 0; i < SUITS_QUANTITY; i++) {
@@ -181,7 +181,7 @@ class Dealer {
 
   // Send a single card from the deck to a player
   dealCard (player) {
-    if(this.playDeck.length < 1) {
+    if(this.playDeck.deck.length < 1) {
       return false
     } else {
       player.addCard(this.getCardFromDeck());
@@ -194,12 +194,13 @@ class Dealer {
     do {
       // For each player:
       for (var i = 0; i < this.players.length; i++) {
+        console.log("DECK SIZE AT TURN START: " + this.playDeck.deck.length);
         var playerTakingTurn = this.players[i];
 
         // If the player has no cards, draw a card
         if(!playerTakingTurn.takeTurn()) {
           // If player cannot draw a card because deck is empty
-          if(!dealCard(playerTakingTurn)) {
+          if(!this.dealCard(playerTakingTurn)) {
             // Skip player, there is nothing else they can do
             console.log("DECK EMPTY");
             continue;
@@ -229,7 +230,11 @@ class Dealer {
           // If no matches
           if(matchingValueIndicies.length < 1) {
             console.log("GO FISH!");
-            this.dealCard(playerTakingTurn);
+            // If player cannot draw a card because deck is empty
+            if(!this.dealCard(playerTakingTurn)) {
+              // Skip player, there is nothing else they can do
+              console.log("DECK EMPTY");
+            }
             continue;
           }
 
@@ -259,6 +264,42 @@ class Dealer {
     } while (this.checkWinCondition());
 
     console.log("GAME OVER!");
+    var winnersArray = [];
+    var winValue = 0;
+    for (var i = 0; i < this.players.length; i++) {
+      if(this.players[i].getNumSets() > winValue) {
+        winValue = this.players[i].getNumSets();
+        winnersArray = [];
+        winnersArray.push(i);
+      }
+      else if (this.players[i].getNumSets() === winValue) {
+        winnersArray.push(i);
+      }
+
+      console.log("Player " + this.players[i].id + " has " + this.players[i].getNumSets() + " sets.");
+    }
+    // 
+    // if(winnersArray.length > 1) {
+    //   console.log("Winners array: " + winnersArray);
+    //   var winnerValue = 0;
+    //   for (var i = 0; i < winnersArray.length; i++) {
+    //     var setsValue = 0;
+    //     for (var j = 0; j < this.players[winnersArray[i]].getNumSets(); j++) {
+    //       setsValue += this.players[winnersArray[i]].getSets()[j];
+    //     }
+    //     console.log("PLAYER " + this.players[winnersArray[i]].id + " HAS A SET VALUE OF: " + setsValue);
+    //
+    //     if(setsValue > winnerValue) {
+    //       winnerValue = setsValue;
+    //       winnersArray = [this.players[winnersArray[i]].id];
+    //     }
+    //   }
+    // }
+
+    for (var i = 0; i < winnersArray.length; i++) {
+      console.log("PLAYER " + this.players[winnersArray[i]].id + " WINS!");
+    }
+
   }
 
   // TAKE a player's hand and searches for a specific card value.
@@ -290,13 +331,22 @@ class Dealer {
   // If true
   // Player with most sets wins
   checkWinCondition () {
-    // If deck is empty, stop
-    if(this.playDeck.deck.length < 1) {
-      return false;
-    } else {
-      return true;
+    var totalSets = 0;
+    for (var i = 0; i < this.players.length; i++) {
+      totalSets += this.players[i].getNumSets();
     }
-    // TODO: More complicated win: count player sets, decide winner
+
+    if(totalSets === 13) {
+      return false;
+    }
+    return true;
+    // If 13 sets played, stop
+    // If deck is empty, stop
+    // if(this.playDeck.deck.length < 1) {
+    //   return false;
+    // } else {
+    //   return true;
+    // }
   }
 
   // Takes array of cards and passes it to a player
@@ -334,11 +384,12 @@ class Player {
     return this.hand;
   }
 
+  // TAKES array of index values for cards to remove
   // Removes cards from hand by interating from end to beginning
   // This avoids incorrect references after splice
   // RETURN the removed cards
   removeCards (indexArray) {
-    var returningCards = [];
+    var removedCards = [];
     for (var i = (indexArray.length - 1); i >= 0; i--) {
       console.log("Removing card at index " + indexArray[i] + " from player " + this.id);
 
@@ -349,21 +400,15 @@ class Player {
       this.hand.splice(indexArray[i], 1);
       console.log(singleCard);
 
-      // Push singleCard to returningCards array
-      returningCards.push(singleCard);
+      // Push singleCard to removedCards array
+      removedCards.push(singleCard);
     }
-    for (var i = 0; i < returningCards.length; i++) {
-      console.log("Value of removed cards: " + returningCards[i].value);
+    for (var i = 0; i < removedCards.length; i++) {
+      console.log("Value of removed cards: " + removedCards[i].value);
     }
     console.log(this.hand);
-    console.log(returningCards);
-    return returningCards;
-  }
-
-  // Organise hand S,H,C,D, value ascending
-  sortHand () {
-    this.hand.sort(function (a,b) {return a.value - b.value});
-    console.log(this.getHand());
+    console.log(removedCards);
+    return removedCards;
   }
 
   // If hand empty, get card ELSE call a card
@@ -393,9 +438,47 @@ class Player {
     return [this.hand[rand1], rand2];
   }
 
+  // Organise hand S,H,C,D, value ascending
+  sortHand () {
+    this.hand.sort(function (a,b) {return a.value - b.value});
+    console.log(this.getHand());
+    this.checkHand();
+  }
+
   checkHand() {
-    // for (var i = 0; i < this.hand.length; i++) {
-    //   this.hand[i]
-    // }
+    var currentValue = 0;
+    var valueCount = 1;
+
+    for (var i = 0; i < this.hand.length; i++) {
+      if (this.hand[i].value !== currentValue) {
+        currentValue = this.hand[i].value;
+        valueCount = 1;
+      } else {
+        valueCount++;
+      }
+
+      if(valueCount === 4) {
+        console.log("FOUND SET, value: " + this.hand[i].value);
+        var set = this.hand[i].value;
+        this.playSet(set);
+
+        // Remove set from hand
+        this.removeCards([i-3, i-2, i-1, i]);
+      }
+    }
+  }
+
+  playSet(set) {
+    // TODO: Adds set to sets and removes from hand
+    this.sets.push(set);
+    console.log("P1 num sets: " + this.sets.length);
+  }
+
+  getNumSets() {
+    return this.sets.length;
+  }
+
+  getSets() {
+    return this.sets;
   }
 }
