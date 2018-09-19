@@ -148,6 +148,9 @@ class Dealer {
     for (var i = 0; i < this.playerCount; i++) {
       var newPlayer = new Player();
       newPlayer.id = i+1;
+      if (i === 0) {
+        newPlayer.setHuman();
+      }
       this.players.push(newPlayer);
       console.log(newPlayer);
     }
@@ -367,6 +370,10 @@ class Player {
     return this.hand;
   }
 
+  setHuman () {
+    this.human = true;
+  }
+
   // TAKES array of index values for cards to remove
   // Removes cards from hand by interating from end to beginning
   // This avoids incorrect references after splice
@@ -396,14 +403,25 @@ class Player {
 
   // If hand empty, get card ELSE call a card
   takeTurn () {
-    // TODO: If hand empty, get card ELSE call a card
-    console.log("Player " + this.id + " taking turn");
-    if(this.hand.length < 1) {
-      console.log("Empty hand");
-      return false;
+    if(!human) {
+      console.log("Player " + this.id + " taking turn");
+      if(this.hand.length < 1) {
+        console.log("Empty hand");
+        return false;
+      } else {
+        console.log(this.id + " has cards in hand");
+        return true;
+      }
     } else {
-      console.log(this.id + " has cards in hand");
-      return true;
+      console.log("HUMAN TURN!");
+      // TODO: REPLACE PLACEHOLDER WITH REAL HUMAN INTERRACTION
+      console.log("Player " + this.id + " taking turn");
+      if(this.hand.length < 1) {
+        console.log("Empty hand");
+        return false;
+      } else {
+        console.log(this.id + " has cards in hand");
+        return true;
     }
   }
 
