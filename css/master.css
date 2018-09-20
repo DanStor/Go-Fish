@@ -18,10 +18,12 @@
 
 .card {
   width: 100px;
+  /* height: 200px; */
   justify-content: space-around;
 }
 
 #cardContainer {
+  /* display: flex; */
   flex-wrap: nowrap;
 }
 

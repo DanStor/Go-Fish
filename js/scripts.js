@@ -13,7 +13,7 @@ $(document).ready(function () {
   });
   $("#opponentContainer").on("click", ".opponent", function() {
     opponentPress(this);
-  })
+  });
 });
 
 function moveOn() {
@@ -22,9 +22,14 @@ function moveOn() {
   }
 }
 
-function drawCard() {
-  // TODO: Draw a card
+function drawCard(player) {
   console.log("Card drawn");
+  if(player.getHand.length > 1) {
+    $("playerInfo").html("You have cards in your hand, you cannot draw a card.")
+  } else {
+
+  }
+  return;
 }
 
 function makeCard() {
@@ -37,6 +42,13 @@ function cardPress(press) {
   console.log("Value to search for: " + value);
   searchValue = value;
   $("#searchValue").html(searchValue);
+}
+
+function resetSearchValues() {
+  $("#searchValue").html("");
+  $("#searchPlayer").html("");
+  searchValue = "x";
+  searchPlayer = "x";
 }
 
 function opponentPress(press) {
@@ -60,6 +72,7 @@ function buttonPress() {
 // Gameplay cycle runs here after setup
 function playGame(playerInputValue, playerInputOpponent) {
   if(playerInputValue === "x" || playerInputOpponent === "x") {
+    $("playerInfo").html("Select opponent and card value to fish!");
     return;
   }
 
@@ -78,8 +91,8 @@ function playGame(playerInputValue, playerInputOpponent) {
       var valueToSearch = parseInt(playerInputValue);
       var opponentToSearch = dealer.players[playerInputOpponent];
       instigateCall(valueToSearch, opponentToSearch, playerTakingTurn);
+      resetSearchValues();
       continue;
-      console.log("I AM NEVER CALLED! THIS IS A GOOD THING!");
     }
 
     // If the player has no cards, draw a card
@@ -134,8 +147,14 @@ function playGame(playerInputValue, playerInputOpponent) {
       console.log("Player " + dealer.players[i].id + " has " + dealer.players[i].getNumSets() + " sets.");
     }
 
+    $("#cardContainer").empty();
     for (var i = 0; i < winnersArray.length; i++) {
       console.log("PLAYER " + dealer.players[winnersArray[i]].id + " WINS!");
+      if(dealer.players[winnersArray[i]].id > 1) {
+        $("#cardContainer").append("<h3>OPPONENT " + dealer.players[winnersArray[i]].id-1 + " WINS!</h3>");
+      } else {
+        $("#cardContainer").append("<h3>YOU WIN!</h3>");
+      }
     }
     gameActive = false;
   }
@@ -343,7 +362,7 @@ class Dealer {
         newPlayer.setHuman();
       } else {
         var opponentNumber = i;
-        $("#opponentContainer").append("<div class=\"opponent\" number=\"" + opponentNumber + "\">\n<button class=\"\" type=\"button\">Opponent " + opponentNumber + "</button>\n<h3>Sets: 0</h3>\n<h5 class=\"actionExplain\">==========</h5>\n</div>");
+        $("#opponentContainer").append("<div class=\"opponent\" number=\"" + opponentNumber + "\">\n<button class=\"\" type=\"button\">Opponent " + opponentNumber + "</button>\n<h5>Sets:</h5>\n<h3 class=\"opponentSets\">0</h3>\n<h5 class=\"actionExplain\">==========</h5>\n</div>");
       }
       this.players.push(newPlayer);
       console.log(newPlayer);
@@ -425,13 +444,6 @@ class Dealer {
       return false;
     }
     return true;
-    // If 13 sets played, stop
-    // If deck is empty, stop
-    // if(this.playDeck.deck.length < 1) {
-    //   return false;
-    // } else {
-    //   return true;
-    // }
   }
 
   // Takes array of cards and passes it to a player
@@ -510,7 +522,6 @@ class Player {
   // If hand empty, get card ELSE call a card
   takeTurn () {
     if(this.human) {
-      // TODO: REPLACE PLACEHOLDER WITH REAL HUMAN INTERRACTION
       console.log("HUMAN TURN!");
       console.log("Player " + this.id + " taking turn");
       if(this.hand.length < 1) {
@@ -599,7 +610,7 @@ class Player {
         setsString += toAdd;
       }
       console.log("MADE IT HERE!");
-      console.log($('#opponentContainer').children("[number=" + (this.id-1) + "]").eq(0).children().eq(1).html(setsString));
+      console.log($('#opponentContainer').children("[number=" + (this.id-1) + "]").eq(0).children(".opponentSets").eq(0).html(setsString));
     }
   }
 
