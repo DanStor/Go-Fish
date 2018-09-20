@@ -8,10 +8,22 @@
   <body>
     <div class="container center">
       <h1>Let's Play Go Fish!</h1>
-      <h2 id="sven">This</h2>
+      <div class="center search">
+        <div class="">
+          <h4>Value To Search For: </h4>
+          <h2 id="searchValue">This</h2>
+        </div>
+        <div class="">
+          <h4>Opponent To Fish From: </h4>
+          <h2 id="searchPlayer">That</h2>
+        </div>
+      </div>
+      <h4>Sets: </h4>
+      <h2 id="sets">TODO</h2>
       <button id="startButton" type="button">Start Game</button>
       <button id="makeCard" type="button">Make Card</button>
       <button id="drawCard" type="button">Draw Card</button>
+      <button id="continue" type="button">Continue</button>
       <h2>Your Cards</h2>
     </div>
 
@@ -21,13 +33,25 @@
       <img class="card" src="../images/cardsjpg/AC.jpg" alt="A card">
       <img class="card" src="../images/cardsjpg/AD.jpg" alt="A card">
     </div>
-
-    <div class="container center" id="opponents">
-      <button id="p2" type="button">Player 2</button>
-      <button id="p3" type="button">Player 3</button>
-      <button id="p4" type="button">Player 4</button>
-      <button id="p5" type="button">Player 5</button>
-      <button id="p6" type="button">Player 6</button>
+    <div class="container-fluid center">
+      <h2>Your Opponents</h2>
+      <div class="container" id="opponentContainer">
+        <div class="">
+          <button class="opponent" number="x" type="button">Opponent</button>
+          <h3>Sets:</h3>
+          <h3>TODO</h3>
+        </div>
+        <div class="">
+          <button class="opponent" number="x" type="button">Opponent</button>
+          <h3>Sets:</h3>
+          <h3>TODO</h3>
+        </div>
+        <div class="">
+          <button class="opponent" number="x" type="button">Opponent</button>
+          <h3>Sets:</h3>
+          <h3>TODO</h3>
+        </div>
+      </div>
     </div>
     <div class="scripts">
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

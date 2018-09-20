@@ -1,11 +1,26 @@
+var gameActive = false;
+var dealer;
+var searchValue;
+var searchPlayer;
+
 $(document).ready(function () {
   $("#startButton").click(buttonPress);
   $("#makeCard").click(makeCard);
   $("#drawCard").click(drawCard);
+  $("#continue").click(moveOn);
   $("#cardContainer").on("click", ".card", function () {
     cardPress(this);
   });
+  $("#opponentContainer").on("click", ".opponent", function() {
+    opponentPress(this);
+  })
 });
+
+function moveOn() {
+  if(gameActive) {
+    playGame(searchValue, searchPlayer);
+  }
+}
 
 function drawCard() {
   // TODO: Draw a card
@@ -18,16 +33,137 @@ function makeCard() {
 
 function cardPress(press) {
   console.log("Card clicked");
-  var source = $(press).attr('src');
-  console.log(source);
+  var value = $(press).attr('value');
+  console.log("Value to search for: " + value);
+  searchValue = value;
+  $("#searchValue").html(searchValue);
+}
+
+function opponentPress(press) {
+  console.log("Opponent clicked");
+  var value = $(press).attr('number');
+  console.log("Opponent to search for: " + value);
+  searchPlayer = value;
+  $("#searchPlayer").html(searchPlayer);
 }
 
 function buttonPress() {
-  var element = document.getElementById("sven");
+  // var element = document.getElementById("sven");
   // var playDeck = new Deck();
-  var dealer = new Dealer(requestPlayers());
-  alert("Hands dealt, ready to play.\n Click to begin.");
-  dealer.playGame();
+  if(!gameActive) {
+    dealer = new Dealer(requestPlayers());
+    gameActive = true;
+    alert("Hands dealt, ready to play.\n Click to begin.");
+  }
+}
+
+// Gameplay cycle runs here after setup
+function playGame(playerInputValue, playerInputOpponent) {
+  // For each player:
+  for (var i = 0; i < dealer.players.length; i++) {
+    console.log("DECK SIZE AT TURN START: " + dealer.playDeck.deck.length);
+    var playerTakingTurn = dealer.players[i];
+
+    var canTakeTurn = playerTakingTurn.takeTurn();
+
+    if (canTakeTurn === 2) {
+      console.log("HUMAN TAKES A TURN");
+      console.log("Search Value: " + playerInputValue);
+      console.log("Search Player INDEX: " + playerInputOpponent);
+      // Switch value to int (collected as string from image)
+      var valueToSearch = parseInt(playerInputValue);
+      var opponentToSearch = dealer.players[playerInputOpponent];
+      instigateCall(valueToSearch, opponentToSearch, playerTakingTurn);
+      continue;
+      console.log("I AM NEVER CALLED! THIS IS A GOOD THING!");
+    }
+
+    // If the player has no cards, draw a card
+    if(canTakeTurn === 0) {
+      // If player cannot draw a card because deck is empty
+      if(!dealer.dealCard(playerTakingTurn)) {
+        // Skip player, there is nothing else they can do
+        console.log("DECK EMPTY");
+        continue;
+      }
+    // Else pick a card and player to fish
+    } else {
+      // An array containing:
+      // [0] = direct reference to a card
+      // [1] = index of a player
+      var cardAndPlayerInt = playerTakingTurn.callCardAndPlayer(dealer.players.length);
+
+      // Card value
+      var cardToFind = cardAndPlayerInt[0].value;
+
+      // Direct reference to a player (from index)
+      var playerToFish = dealer.players[cardAndPlayerInt[1]];
+
+      instigateCall(cardToFind, playerToFish, playerTakingTurn);
+
+      console.log(playerTakingTurn.getHand());
+    }
+  }
+
+  for (var i = 0; i < dealer.players.length; i++) {
+    console.log("Player " + dealer.players[i].id + " hand: ");
+    console.log(dealer.players[i].hand);
+  }
+  console.log(dealer.playDeck);
+  playerInputValue = null;
+  playerInputOpponent = null;
+
+  if(!dealer.checkWinCondition()) {
+    console.log("GAME OVER!");
+    var winnersArray = [];
+    var winValue = 0;
+    for (var i = 0; i < dealer.players.length; i++) {
+      if(dealer.players[i].getNumSets() > winValue) {
+        winValue = dealer.players[i].getNumSets();
+        winnersArray = [];
+        winnersArray.push(i);
+      }
+      else if (dealer.players[i].getNumSets() === winValue) {
+        winnersArray.push(i);
+      }
+
+      console.log("Player " + dealer.players[i].id + " has " + dealer.players[i].getNumSets() + " sets.");
+    }
+
+    for (var i = 0; i < winnersArray.length; i++) {
+      console.log("PLAYER " + dealer.players[winnersArray[i]].id + " WINS!");
+    }
+    gameActive = false;
+  }
+}
+
+function instigateCall(cardToFind, playerToFish, playerTakingTurn) {
+  console.log("Fishing from:");
+  console.log(playerToFish);
+
+  // Array of index values point to search matches
+  var matchingValueIndicies = dealer.findCardInPlayer(cardToFind, playerToFish);
+
+  console.log(matchingValueIndicies);
+  console.log("Length of values array: " + matchingValueIndicies.length);
+
+  // If no matches
+  if(matchingValueIndicies.length < 1) {
+    console.log("GO FISH!");
+    alert("GO FISH!");
+    // If player cannot draw a card because deck is empty
+    if(!dealer.dealCard(playerTakingTurn)) {
+      // Skip player, there is nothing else they can do
+      console.log("DECK EMPTY");
+    }
+    // continue;
+  }
+
+  // Cards to pass to fishing player
+  var cardsToPass = playerToFish.removeCards(matchingValueIndicies);
+  for (var j = 0; j < cardsToPass.length; j++) {
+    playerTakingTurn.addCard(cardsToPass[j]);
+  }
 }
 
 // Get number of players
@@ -105,36 +241,6 @@ class Deck {
             imageRef += "HELP I DON'T HAVE A SUIT!"
         }
         card.image = "../images/cardsjpg/" + imageRef + ".jpg";
-        //   // SWITCH STATEMENT THAT NEVER PRODUCES A KING...
-        //   // switch (j) {
-        //   //   case 10:
-        //   //     card.value = "J";
-        //   //     break;
-        //   //   case 11:
-        //   //     card.value = "Q";
-        //   //     console.log(j);
-        //   //     break;
-        //   //   case 12:
-        //   //     card.vaue = "K";
-        //   //     break;
-        //   //   default:
-        //   //     throw "invalidCardError";
-        //   // }
-        //
-        //   OTHER FAILURE
-        //   if(j === 10) {
-        //     card.value = "J";
-        //   }
-        //   else if(j === 11) {
-        //     card.value = "Q";
-        //   }
-        //   else if(j === 12) {
-        //     card.value = "K";
-        //   }
-        //   else {
-        //     throw "invalidCardError";
-        //   }
-
         this.deck.push(card);
       }
     }
@@ -208,8 +314,11 @@ class Dealer {
     for (var i = 0; i < this.playerCount; i++) {
       var newPlayer = new Player();
       newPlayer.id = i+1;
-      if (i === (this.playerCount - 1)) {
+      if (i === 0) {
         newPlayer.setHuman();
+      } else {
+        var opponentNumber = i;
+        $("#opponentContainer").append("<button class=\"opponent\" number=\"" + opponentNumber + "\" type=\"button\">Opponent " + opponentNumber + "</button>");
       }
       this.players.push(newPlayer);
       console.log(newPlayer);
@@ -252,118 +361,17 @@ class Dealer {
     return true;
   }
 
-  // Gameplay cycle runs here after setup
-  playGame() {
-    do {
-      // For each player:
-      for (var i = 0; i < this.players.length; i++) {
-        console.log("DECK SIZE AT TURN START: " + this.playDeck.deck.length);
-        var playerTakingTurn = this.players[i];
-
-        var canTakeTurn = playerTakingTurn.takeTurn();
-
-        if (canTakeTurn === 2) {
-          console.log("HUMAN TAKES A TURN");
-        }
-
-        // If the player has no cards, draw a card
-        if(canTakeTurn === 0) {
-          // If player cannot draw a card because deck is empty
-          if(!this.dealCard(playerTakingTurn)) {
-            // Skip player, there is nothing else they can do
-            console.log("DECK EMPTY");
-            continue;
-          }
-        // Else pick a card and player to fish
-        } else {
-          // An array containing:
-          // [0] = direct reference to a card
-          // [1] = index of a player
-          var cardAndPlayerInt = playerTakingTurn.callCardAndPlayer(this.players.length);
-
-          // Direct reference to a card
-          var cardToFind = cardAndPlayerInt[0];
-
-          // Direct reference to a player (from index)
-          var playerToFish = this.players[cardAndPlayerInt[1]];
-
-          console.log("Fishing from:");
-          console.log(playerToFish);
-
-          // Array of index values point to search matches
-          var matchingValueIndicies = this.findCardInPlayer(cardToFind, playerToFish);
-
-          console.log(matchingValueIndicies);
-          console.log("Length of values array: " + matchingValueIndicies.length);
-
-          // If no matches
-          if(matchingValueIndicies.length < 1) {
-            console.log("GO FISH!");
-            // If player cannot draw a card because deck is empty
-            if(!this.dealCard(playerTakingTurn)) {
-              // Skip player, there is nothing else they can do
-              console.log("DECK EMPTY");
-            }
-            continue;
-          }
-
-          // Cards to pass to fishing player
-          var cardsToPass = playerToFish.removeCards(matchingValueIndicies);
-          for (var j = 0; j < cardsToPass.length; j++) {
-            playerTakingTurn.addCard(cardsToPass[j]);
-          }
-
-          console.log(playerTakingTurn.getHand());
-
-          // For each matching card value
-          // for (var j = 0; j < matchingValueIndicies.length; j++) {
-          //   // console.log(matchingValueIndicies[i]);
-          //   // Pass the removed card to the calling player
-          //   var removedCard = playerToFish.removeCard(matchingValueIndicies[j]);
-          //   console.log("Removed card value: " + removedCard.value);
-          // }
-        }
-      }
-
-      for (var i = 0; i < this.players.length; i++) {
-        console.log("Player " + this.players[i].id + " hand: ");
-        console.log(this.players[i].hand);
-      }
-      console.log(this.playDeck);
-    } while (this.checkWinCondition());
-
-    console.log("GAME OVER!");
-    var winnersArray = [];
-    var winValue = 0;
-    for (var i = 0; i < this.players.length; i++) {
-      if(this.players[i].getNumSets() > winValue) {
-        winValue = this.players[i].getNumSets();
-        winnersArray = [];
-        winnersArray.push(i);
-      }
-      else if (this.players[i].getNumSets() === winValue) {
-        winnersArray.push(i);
-      }
-
-      console.log("Player " + this.players[i].id + " has " + this.players[i].getNumSets() + " sets.");
-    }
-
-    for (var i = 0; i < winnersArray.length; i++) {
-      console.log("PLAYER " + this.players[winnersArray[i]].id + " WINS!");
-    }
-
-  }
-
-  // TAKE a player's hand and searches for a specific card value.
+  // TAKE a card value and a player
   // RETURN array of matching cards
   findCardInPlayer(card, opponent) {
-    console.log("Fishing value " + card.value + " from player " + opponent.id);
+    console.log("Fishing value " + card + " from player " + opponent.id);
     var cardsOfMatchingValue = [];
-
+    console.log(typeof card);
     // For each card in oppenent's hand
     for (var i = 0; i < opponent.hand.length; i++) {
       // If card value matches value searched for
-      if(opponent.hand[i].value === card.value) {
+      console.log(typeof opponent.hand[i].value);
+      if(opponent.hand[i].value === card) {
         console.log("Card found!");
         // Add index to cardsOfMatchingValue
         cardsOfMatchingValue.push(i);
@@ -431,6 +439,7 @@ class Player {
   addCard (card) {
     this.hand.push(card);
     this.sortHand();
+    this.checkHand();
   }
 
   // Returns player hand
@@ -467,6 +476,9 @@ class Player {
     }
     console.log(this.hand);
     console.log(removedCards);
+    if(this.human) {
+      this.humanController.populateCardContainer(this.getHand());
+    }
     return removedCards;
   }
 
@@ -516,7 +528,6 @@ class Player {
     if(this.human) {
       this.humanController.populateCardContainer(this.getHand());
     }
-    this.checkHand();
   }
 
   checkHand() {
@@ -582,6 +593,6 @@ class Human {
   }
 
   addCardToContainer(card) {
-    $("#cardContainer").append("<img class=\"card\" src=\"" + card.image + "\" alt=\"A card\">");
+    $("#cardContainer").append("<img class=\"card\" src=\"" + card.image + "\" value=\"" + card.value + "\" alt=\"A card\">");
   }
 }
