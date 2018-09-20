@@ -1,7 +1,7 @@
 var gameActive = false;
 var dealer;
-var searchValue;
-var searchPlayer;
+var searchValue = "x";
+var searchPlayer = "x";
 
 $(document).ready(function () {
   $("#startButton").click(buttonPress);
@@ -44,7 +44,7 @@ function opponentPress(press) {
   var value = $(press).attr('number');
   console.log("Opponent to search for: " + value);
   searchPlayer = value;
-  $("#searchPlayer").html(searchPlayer);
+  $("#searchPlayer").html("Opponent: " + searchPlayer);
 }
 
 function buttonPress() {
@@ -59,6 +59,10 @@ function buttonPress() {
 
 // Gameplay cycle runs here after setup
 function playGame(playerInputValue, playerInputOpponent) {
+  if(playerInputValue === "x" || playerInputOpponent === "x") {
+    return;
+  }
+
   // For each player:
   for (var i = 0; i < dealer.players.length; i++) {
     console.log("DECK SIZE AT TURN START: " + dealer.playDeck.deck.length);
@@ -150,7 +154,6 @@ function instigateCall(cardToFind, playerToFish, playerTakingTurn) {
   // If no matches
   if(matchingValueIndicies.length < 1) {
     console.log("GO FISH!");
-    alert("GO FISH!");
     // If player cannot draw a card because deck is empty
     if(!dealer.dealCard(playerTakingTurn)) {
       // Skip player, there is nothing else they can do
@@ -163,6 +166,28 @@ function instigateCall(cardToFind, playerToFish, playerTakingTurn) {
   var cardsToPass = playerToFish.removeCards(matchingValueIndicies);
   for (var j = 0; j < cardsToPass.length; j++) {
     playerTakingTurn.addCard(cardsToPass[j]);
+  }
+
+  var num = playerToFish.id;
+  if(!playerTakingTurn.human) {
+    if(num === 1) {
+      num = "YOU"
+    } else {
+      num = "Opponent " + (playerToFish.id - 1);
+    }
+    if(matchingValueIndicies < 1) {
+      $(".actionExplain").eq((playerTakingTurn.id - 2)).html("Fished " + cardToFind + " from " + num + ". GO FISH!");
+    } else {
+      $(".actionExplain").eq(playerTakingTurn.id - 2).html("Fished " + cardToFind + " from " + num + ". Gained " + matchingValueIndicies.length + " cards!");
+    }
+
+  } else {
+    num = "Opponent " + (playerToFish.id - 1);
+    if(matchingValueIndicies < 1) {
+      $("#playerInfo").html("Fished " + cardToFind + " from " + num + ". GO FISH!");
+    } else {
+      $("#playerInfo").html("Fished " + cardToFind + " from " + num + ". Gained " + matchingValueIndicies.length + " cards!");
+    }
   }
 }
 
@@ -318,7 +343,7 @@ class Dealer {
         newPlayer.setHuman();
       } else {
         var opponentNumber = i;
-        $("#opponentContainer").append("<button class=\"opponent\" number=\"" + opponentNumber + "\" type=\"button\">Opponent " + opponentNumber + "</button>");
+        $("#opponentContainer").append("<div class=\"opponent\" number=\"" + opponentNumber + "\">\n<button class=\"\" type=\"button\">Opponent " + opponentNumber + "</button>\n<h3>Sets: 0</h3>\n<h5 class=\"actionExplain\">==========</h5>\n</div>");
       }
       this.players.push(newPlayer);
       console.log(newPlayer);
@@ -557,6 +582,25 @@ class Player {
     // TODO: Adds set to sets and removes from hand
     this.sets.push(set);
     console.log("P1 num sets: " + this.sets.length);
+    this.updateSetsUI();
+  }
+
+  updateSetsUI() {
+    var setsString = "";
+    if(this.human) {
+      for (var i = 0; i < this.sets.length; i++) {
+        var toAdd = " |" + this.sets[i] + "| ";
+        setsString += toAdd;
+      }
+      $('#humanSets').html(setsString);
+    } else {
+      for (var i = 0; i < this.sets.length; i++) {
+        var toAdd = " |" + this.sets[i] + "| ";
+        setsString += toAdd;
+      }
+      console.log("MADE IT HERE!");
+      console.log($('#opponentContainer').children("[number=" + (this.id-1) + "]").eq(0).children().eq(1).html(setsString));
+    }
   }
 
   getNumSets() {
@@ -585,7 +629,6 @@ class Human {
       this.addCardToContainer(hand[i]);
     }
     console.log("Cards to display: " + cardCount);
-    // alert("Cards added. Press to continue.");
   }
 
   clearBoard() {
