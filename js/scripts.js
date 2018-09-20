@@ -41,7 +41,24 @@ function cardPress(press) {
   var value = $(press).attr('value');
   console.log("Value to search for: " + value);
   searchValue = value;
-  $("#searchValue").html(searchValue);
+
+  switch (value) {
+    case "11":
+      value = "Jack";
+      break;
+    case "12":
+      value = "Queen";
+      break;
+    case "13":
+      value = "King";
+      break;
+    case "1":
+      value = "Ace";
+      break;
+    default:
+  }
+
+  $("#searchValue").html(value);
 }
 
 function resetSearchValues() {
@@ -187,6 +204,22 @@ function instigateCall(cardToFind, playerToFish, playerTakingTurn) {
     playerTakingTurn.addCard(cardsToPass[j]);
   }
 
+  switch (cardToFind) {
+    case 11:
+      cardToFind = "Jack";
+      break;
+    case 12:
+      cardToFind = "Queen";
+      break;
+    case 13:
+      cardToFind = "King";
+      break;
+    case 1:
+      cardToFind = "Ace";
+      break;
+    default:
+  }
+
   var num = playerToFish.id;
   if(!playerTakingTurn.human) {
     if(num === 1) {
@@ -194,6 +227,7 @@ function instigateCall(cardToFind, playerToFish, playerTakingTurn) {
     } else {
       num = "Opponent " + (playerToFish.id - 1);
     }
+
     if(matchingValueIndicies < 1) {
       $(".actionExplain").eq((playerTakingTurn.id - 2)).html("Fished " + cardToFind + " from " + num + ". GO FISH!");
     } else {
