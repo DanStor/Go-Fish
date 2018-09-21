@@ -12,3 +12,6 @@ Rules:
 - If, during their turn, a player ends up with all 4 cards then they have collected a full set. The player then must immediately declare this and play their set face up, in front of them.
 - If during play a player ends up with no cards in their hand they must draw a card from the deck, rather than '_going fishing_' for cards from other people.
 - Once all 13 sets have been completed, play ends.
+
+Get Playing:
+("https://danimould.github.io/Go-Fish-/pages/index.html")
