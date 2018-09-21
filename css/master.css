@@ -2,19 +2,44 @@
   border: 1px solid red;
 } */
 
+
+
 body {
+  font-family: "Open Sans", "Trebuchet MS", Helvetica, sans-serif;
   margin: 0px;
   background-color: green;
   color: white;
   border: 5px solid gold;
-  border-bottom: 0px;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:active {
+  color: gold;
+}
+
+a:focus {
+  color: white;
 }
 
 button {
   height: 30px;
   width: 100px;
-  border-top-left-radius: 50%;
-  border-bottom-right-radius: 50%;
+  border-radius: 10%;
+  background-color: ivory;
+  border-color: ivory;
+  border-style: outset;
+  border-width: 5px;
+}
+
+button:active {
+  border-style: inset;
+}
+
+button:focus {
+  outline: none;
 }
 
 .center {
@@ -41,6 +66,10 @@ button {
 .card:hover {
   position: relative;
   top: -10px;
+}
+
+.title {
+  margin-top: 40%;
 }
 
 #cardContainer {
