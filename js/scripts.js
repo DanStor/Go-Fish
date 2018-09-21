@@ -24,7 +24,6 @@ function moveOn() {
 }
 
 function drawCard(player) {
-  console.log("Card drawn");
   if(player.getHand.length > 1) {
     $("playerInfo").html("You have cards in your hand, you cannot draw a card.")
   } else {
@@ -38,9 +37,7 @@ function makeCard() {
 }
 
 function cardPress(press) {
-  console.log("Card clicked");
   var value = $(press).attr('value');
-  console.log("Value to search for: " + value);
   searchValue = value;
 
   switch (value) {
@@ -70,9 +67,7 @@ function resetSearchValues() {
 }
 
 function opponentPress(press) {
-  console.log("Opponent clicked");
   var value = $(press).attr('number');
-  console.log("Opponent to search for: " + value);
   searchPlayer = value;
   $("#searchPlayer").html("Opponent: " + searchPlayer);
 }
@@ -97,7 +92,6 @@ function playGame(playerInputValue, playerInputOpponent) {
 
   // For each player:
   for (var i = 0; i < dealer.players.length; i++) {
-    console.log("DECK SIZE AT TURN START: " + dealer.playDeck.deck.length);
     var playerTakingTurn = dealer.players[i];
 
     var canTakeTurn = playerTakingTurn.takeTurn();
@@ -111,7 +105,6 @@ function playGame(playerInputValue, playerInputOpponent) {
         // If player cannot draw a card because deck is empty
         if(!dealer.dealCard(playerTakingTurn)) {
           // Skip player, there is nothing else they can do
-          console.log("DECK EMPTY");
           $("#playerInfo").html("Deck is empty. Please continue to end.")
           $("#continue").html("Continue");
           continue;
@@ -152,19 +145,12 @@ function playGame(playerInputValue, playerInputOpponent) {
       var playerToFish = dealer.players[cardAndPlayerInt[1]];
 
       instigateCall(cardToFind, playerToFish, playerTakingTurn);
-
-      console.log(playerTakingTurn.getHand());
     }
   }
 
-  for (var i = 0; i < dealer.players.length; i++) {
-    console.log("Player " + dealer.players[i].id + " hand: ");
-    console.log(dealer.players[i].hand);
-  }
   console.log(dealer.playDeck);
 
   if(!dealer.checkWinCondition()) {
-    console.log("GAME OVER!");
     var winnersArray = [];
     var winValue = 0;
     for (var i = 0; i < dealer.players.length; i++) {
@@ -176,13 +162,10 @@ function playGame(playerInputValue, playerInputOpponent) {
       else if (dealer.players[i].getNumSets() === winValue) {
         winnersArray.push(i);
       }
-
-      console.log("Player " + dealer.players[i].id + " has " + dealer.players[i].getNumSets() + " sets.");
     }
 
     $("#cardContainer").empty();
     for (var i = 0; i < winnersArray.length; i++) {
-      console.log("PLAYER " + dealer.players[winnersArray[i]].id + " WINS!");
       if(dealer.players[winnersArray[i]].id > 1) {
         $("#cardContainer").append("<h3>OPPONENT " + (dealer.players[winnersArray[i]].id - 1) + " WINS!</h3>");
       } else {
@@ -194,25 +177,19 @@ function playGame(playerInputValue, playerInputOpponent) {
 }
 
 function instigateCall(cardToFind, playerToFish, playerTakingTurn) {
-  console.log("Fishing from:");
-  console.log(playerToFish);
-
   // Array of index values point to search matches
   var matchingValueIndicies = dealer.findCardInPlayer(cardToFind, playerToFish);
 
-  console.log(matchingValueIndicies);
-  console.log("Length of values array: " + matchingValueIndicies.length);
-
-  // If no matches
-  if(matchingValueIndicies.length < 1) {
-    console.log("GO FISH!");
-    // If player cannot draw a card because deck is empty
-    if(!dealer.dealCard(playerTakingTurn)) {
-      // Skip player, there is nothing else they can do
-      console.log("DECK EMPTY");
-    }
-    // continue;
-  }
+  // // If no matches
+  // if(matchingValueIndicies.length < 1) {
+  //   console.log("GO FISH!");
+  //   // If player cannot draw a card because deck is empty
+  //   if(!dealer.dealCard(playerTakingTurn)) {
+  //     // Skip player, there is nothing else they can do
+  //     console.log("DECK EMPTY");
+  //   }
+  //   // continue;
+  // }
 
   // Cards to pass to fishing player
   var cardsToPass = playerToFish.removeCards(matchingValueIndicies);
@@ -362,22 +339,14 @@ class Deck {
   }
 
   printDeck() {
-      console.log(this.deck);
+    $("#deckSize").html(this.deck.length);
   }
 
   getCard() {
-    return this.deck.pop();
+    var drawnCard = this.deck.pop();
+    this.printDeck();
+    return drawnCard;
   }
-
-  // .pop in getCard does this job
-  deleteFromDeck(c) {
-    // TODO: Remove card from list of available cards
-  }
-
-  // 'dealHands' will now be dealt with by 'Dealer' class
-  // dealHands(players) {
-  //   // TODO: Deal out necessary number of cards to players (7 for 2/3 players, 5 for 4/5 players)
-  // }
 }
 
 // Manages interractions between deck and players
