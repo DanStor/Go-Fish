@@ -374,6 +374,7 @@ class Dealer {
   // Create necessary number of player objects
   createPlayers () {
     // Create player class for each player
+    $("#opponentContainer").empty();
     for (var i = 0; i < this.playerCount; i++) {
       var newPlayer = new Player();
       newPlayer.id = i+1;
