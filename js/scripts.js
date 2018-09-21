@@ -180,16 +180,16 @@ function instigateCall(cardToFind, playerToFish, playerTakingTurn) {
   // Array of index values point to search matches
   var matchingValueIndicies = dealer.findCardInPlayer(cardToFind, playerToFish);
 
-  // // If no matches
-  // if(matchingValueIndicies.length < 1) {
-  //   console.log("GO FISH!");
-  //   // If player cannot draw a card because deck is empty
-  //   if(!dealer.dealCard(playerTakingTurn)) {
-  //     // Skip player, there is nothing else they can do
-  //     console.log("DECK EMPTY");
-  //   }
-  //   // continue;
-  // }
+  // If no matches
+  if(matchingValueIndicies.length < 1) {
+    console.log("GO FISH!");
+    // If player cannot draw a card because deck is empty
+    if(!dealer.dealCard(playerTakingTurn)) {
+      // Skip player, there is nothing else they can do
+      console.log("DECK EMPTY");
+    }
+    // continue;
+  }
 
   // Cards to pass to fishing player
   var cardsToPass = playerToFish.removeCards(matchingValueIndicies);
@@ -343,9 +343,7 @@ class Deck {
   }
 
   getCard() {
-    var drawnCard = this.deck.pop();
-    this.printDeck();
-    return drawnCard;
+    return this.deck.pop();
   }
 }
 
