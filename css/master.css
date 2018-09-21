@@ -17,10 +17,14 @@ a {
 }
 
 a:active {
+  color: red;
+}
+
+a:hover {
   color: gold;
 }
 
-a:focus {
+a:visited {
   color: white;
 }
 
