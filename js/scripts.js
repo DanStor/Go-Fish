@@ -343,7 +343,9 @@ class Deck {
   }
 
   getCard() {
-    return this.deck.pop();
+    var drawnCard = this.deck.pop();
+    this.printDeck()
+    return drawnCard;
   }
 }
 
