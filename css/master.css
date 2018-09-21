@@ -42,6 +42,12 @@ button:focus {
   outline: none;
 }
 
+ul {
+  text-align: left;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
 .center {
   /* display: block; */
   text-align: center;
