@@ -5,7 +5,6 @@ var searchPlayer = "x";
 
 $(document).ready(function () {
   $("#startButton").click(buttonPress);
-  $("#makeCard").click(makeCard);
   $("#continue").click(moveOn);
   $("#cardContainer").on("click", ".card", function () {
     cardPress(this);
@@ -24,10 +23,6 @@ function buttonPress() {
     gameActive = true;
     alert("Hands dealt, ready to play.\n Click to begin.");
   }
-}
-
-function makeCard() {
-  $("#cardContainer").append("<img class=\"card\" src=\"../images/cardsjpg/AC.jpg\" alt=\"A card\">");
 }
 
 function moveOn() {
