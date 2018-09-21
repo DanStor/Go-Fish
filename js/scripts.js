@@ -384,10 +384,8 @@ class Dealer {
         $("#opponentContainer").append("<div class=\"opponent\" number=\"" + opponentNumber + "\">\n<button class=\"\" type=\"button\">Opponent " + opponentNumber + "</button>\n<h5>Sets:</h5>\n<h3 class=\"opponentSets\">0</h3>\n<h5 class=\"actionExplain\">==========</h5>\n</div>");
       }
       this.players.push(newPlayer);
-      console.log(newPlayer);
     }
     this.playerNum = this.players.length;
-    console.log(this.players);
   }
 
   // Deal hand of correct size to each player
@@ -673,7 +671,7 @@ class Player {
         setsString += toAdd;
       }
       console.log("MADE IT HERE!");
-      console.log($('#opponentContainer').children("[number=" + (this.id-1) + "]").eq(0).children(".opponentSets").eq(0).html(setsString));
+      $('#opponentContainer').children("[number=" + (this.id-1) + "]").eq(0).children(".opponentSets").eq(0).html(setsString);
     }
   }
 
@@ -703,7 +701,6 @@ class Human {
       cardCount++;
       this.addCardToContainer(hand[i]);
     }
-    console.log("Cards to display: " + cardCount);
   }
 
   clearBoard() {

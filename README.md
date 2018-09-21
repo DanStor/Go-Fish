@@ -1,4 +1,4 @@
-#Go Fish Web App#
+# Go Fish Web App
 
 A Go Fish app made with HTML, CSS and JavaScript.
 
