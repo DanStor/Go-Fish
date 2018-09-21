@@ -5,14 +5,6 @@ An emulator for the card game 'Go Fish'. Choose how many opponents you want to p
 
 *(Hint: you should be better, there is no AI)*
 
-## Tools
-- **HTML**
-- **CSS**
-- **JavaScript**
-- **JQuery**
-- **Atom Development Environment**
-- **SourceTree Source Control**
-
 ## Rules:
 
 - Each player starts with 7 cards (2/3 players) or 5 cards (4 or more players).
@@ -24,4 +16,19 @@ An emulator for the card game 'Go Fish'. Choose how many opponents you want to p
 - Once all 13 sets have been completed, play ends.
 
 Get Playing:
-https://danimould.github.io/Go-Fish-/
+https://danimould.github.io/Go-Fish/
+
+## Tools
+- **HTML**
+- **CSS**
+- **JavaScript**
+- **JQuery**
+- **Atom Development Environment**
+- **SourceTree Source Control**
+
+## Development
+
+## Future TODO List
+- **Write a them tune**
+- When there are a large number of players, the game can get stuck towards the end as the random generators fail to find the right card from the right person. Range needs to be narrowed.
+

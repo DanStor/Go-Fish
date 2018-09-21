@@ -15,25 +15,25 @@ $(document).ready(function () {
   });
 });
 
-function moveOn() {
-  if(gameActive) {
-    console.log("MoveOnPressed");
-    console.log(searchValue, searchPlayer);
-    playGame(searchValue, searchPlayer);
+function buttonPress() {
+  // var element = document.getElementById("sven");
+  // var playDeck = new Deck();
+  if(!gameActive) {
+    dealer = new Dealer(requestPlayers());
+    sounds = new Sounds();
+    gameActive = true;
+    alert("Hands dealt, ready to play.\n Click to begin.");
   }
-}
-
-function drawCard(player) {
-  if(player.getHand.length > 1) {
-    $("playerInfo").html("You have cards in your hand, you cannot draw a card.")
-  } else {
-
-  }
-  return;
 }
 
 function makeCard() {
   $("#cardContainer").append("<img class=\"card\" src=\"../images/cardsjpg/AC.jpg\" alt=\"A card\">");
+}
+
+function moveOn() {
+  if(gameActive) {
+    playGame(searchValue, searchPlayer);
+  }
 }
 
 function cardPress(press) {
@@ -59,28 +59,17 @@ function cardPress(press) {
   $("#searchValue").html(value);
 }
 
-function resetSearchValues() {
-  $("#searchValue").html("");
-  $("#searchPlayer").html("");
-  searchValue = "x";
-  searchPlayer = "x";
-}
-
 function opponentPress(press) {
   var value = $(press).attr('number');
   searchPlayer = value;
   $("#searchPlayer").html("Opponent: " + searchPlayer);
 }
 
-function buttonPress() {
-  // var element = document.getElementById("sven");
-  // var playDeck = new Deck();
-  if(!gameActive) {
-    dealer = new Dealer(requestPlayers());
-    sounds = new Sounds();
-    gameActive = true;
-    alert("Hands dealt, ready to play.\n Click to begin.");
-  }
+function resetSearchValues() {
+  $("#searchValue").html("");
+  $("#searchPlayer").html("");
+  searchValue = "x";
+  searchPlayer = "x";
 }
 
 // Gameplay cycle runs here after setup
@@ -98,9 +87,6 @@ function playGame(playerInputValue, playerInputOpponent) {
 
     // Overrides autoplay with human interraction
     if (canTakeTurn === 2) {
-      console.log("HUMAN TAKES A TURN");
-      console.log("Search Value: " + playerInputValue);
-      console.log("Search Player INDEX: " + playerInputOpponent);
       if(playerTakingTurn.getHand() > 1) {
         // If player cannot draw a card because deck is empty
         if(!dealer.dealCard(playerTakingTurn)) {
@@ -128,7 +114,6 @@ function playGame(playerInputValue, playerInputOpponent) {
       // If player cannot draw a card because deck is empty
       if(!dealer.dealCard(playerTakingTurn)) {
         // Skip player, there is nothing else they can do
-        console.log("DECK EMPTY");
         continue;
       }
     // Else pick a card and player to fish
@@ -147,8 +132,6 @@ function playGame(playerInputValue, playerInputOpponent) {
       instigateCall(cardToFind, playerToFish, playerTakingTurn);
     }
   }
-
-  console.log(dealer.playDeck);
 
   if(!dealer.checkWinCondition()) {
     var winnersArray = [];
@@ -182,11 +165,9 @@ function instigateCall(cardToFind, playerToFish, playerTakingTurn) {
 
   // If no matches
   if(matchingValueIndicies.length < 1) {
-    console.log("GO FISH!");
     // If player cannot draw a card because deck is empty
     if(!dealer.dealCard(playerTakingTurn)) {
       // Skip player, there is nothing else they can do
-      console.log("DECK EMPTY");
     }
     // continue;
   }
@@ -272,7 +253,9 @@ class Deck {
         CAN YOU TELL I SPENT A LONG TIME WORKING THIS OUT?!?
         */
 
+        // Template for each card
         var card = {suit: 0, value: 0, image: ""};
+
         card.suit = suits[i];
         card.value = (j+1);
         // Apply reference to corresponding card image:
@@ -407,10 +390,10 @@ class Dealer {
         this.dealCard(this.players[j]);
       }
     }
-
-    for (var i = 0; i < this.players.length; i++) {
-      console.log(this.players[i].getHand());
-    }
+    //
+    // for (var i = 0; i < this.players.length; i++) {
+    //   console.log(this.players[i].getHand());
+    // }
   }
 
   // Send a single card from the deck to a player
@@ -426,15 +409,11 @@ class Dealer {
   // TAKE a card value and a player
   // RETURN array of matching cards
   findCardInPlayer(card, opponent) {
-    console.log("Fishing value " + card + " from player " + opponent.id);
     var cardsOfMatchingValue = [];
-    console.log(typeof card);
     // For each card in oppenent's hand
     for (var i = 0; i < opponent.hand.length; i++) {
       // If card value matches value searched for
-      console.log(typeof opponent.hand[i].value);
       if(opponent.hand[i].value === card) {
-        console.log("Card found!");
         // Add index to cardsOfMatchingValue
         cardsOfMatchingValue.push(i);
       }
@@ -460,11 +439,6 @@ class Dealer {
       return false;
     }
     return true;
-  }
-
-  // Takes array of cards and passes it to a player
-  passCards (cards, player) {
-    // TODO: Takes array of cards and passes it to a player
   }
 
   // Returns length of players array
@@ -512,23 +486,17 @@ class Player {
   removeCards (indexArray) {
     var removedCards = [];
     for (var i = (indexArray.length - 1); i >= 0; i--) {
-      console.log("Removing card at index " + indexArray[i] + " from player " + this.id);
 
       // Capture card in singlecard variable
       var singleCard = this.hand[indexArray[i]];
 
       // Delete card from array
       this.hand.splice(indexArray[i], 1);
-      console.log(singleCard);
 
       // Push singleCard to removedCards array
       removedCards.push(singleCard);
     }
-    for (var i = 0; i < removedCards.length; i++) {
-      console.log("Value of removed cards: " + removedCards[i].value);
-    }
-    console.log(this.hand);
-    console.log(removedCards);
+
     if(this.human) {
       this.humanController.populateCardContainer(this.getHand());
     }
@@ -541,22 +509,16 @@ class Player {
   // If hand empty, get card ELSE call a card
   takeTurn () {
     if(this.human) {
-      console.log("HUMAN TURN!");
-      console.log("Player " + this.id + " taking turn");
       if(this.hand.length < 1) {
-        console.log("Empty hand");
         return 0;
       } else {
-        console.log(this.id + " has cards in hand");
         return 2;
       }
+
     } else {
-      console.log("Player " + this.id + " taking turn");
       if(this.hand.length < 1) {
-        console.log("Empty hand");
         return 0;
       } else {
-        console.log(this.id + " has cards in hand");
         return 1;
       }
     }
@@ -579,18 +541,18 @@ class Player {
   // Organise hand S,H,C,D, value ascending
   sortHand () {
     this.hand.sort(function (a,b) {return a.value - b.value});
-    console.log(this.getHand());
+
     if(this.human) {
       this.humanController.populateCardContainer(this.getHand());
     }
   }
 
+  // Checks this player's hand for any sets
   checkHand() {
     var currentValue = 0;
     var valueCount = 1;
     if(this.hand.length < 1 && this.human) {
       this.humanController.emptyHand();
-      console.log("Hand is empty!");
       return;
     } else if(this.human) {
       this.humanController.fullHand();
@@ -609,7 +571,6 @@ class Player {
       // Removes the latest value, and the 3 preceding
       // This works because the deck is always sorted
       if(valueCount === 4) {
-        console.log("FOUND SET, value: " + this.hand[i].value);
         var set = this.hand[i].value;
         this.playSet(set);
 
@@ -619,10 +580,9 @@ class Player {
     }
   }
 
+  // TAKES a complete set
   playSet(set) {
-    // TODO: Adds set to sets and removes from hand
     this.sets.push(set);
-    console.log("P1 num sets: " + this.sets.length);
     this.updateSetsUI();
   }
 
@@ -671,7 +631,6 @@ class Player {
         }
         setsString += toAdd;
       }
-      console.log("MADE IT HERE!");
       $('#opponentContainer').children("[number=" + (this.id-1) + "]").eq(0).children(".opponentSets").eq(0).html(setsString);
     }
   }
@@ -725,6 +684,7 @@ class Human {
   }
 }
 
+// Global SFX
 class Sounds {
   constructor() {
 
