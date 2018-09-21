@@ -24,4 +24,4 @@ An emulator for the card game 'Go Fish'. Choose how many opponents you want to p
 - Once all 13 sets have been completed, play ends.
 
 Get Playing:
-https://danimould.github.io/Go-Fish-/pages/index.html
+https://danimould.github.io/Go-Fish-/
