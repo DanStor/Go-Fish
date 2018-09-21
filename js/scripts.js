@@ -230,9 +230,9 @@ function instigateCall(cardToFind, playerToFish, playerTakingTurn) {
   } else {
     num = "Opponent " + (playerToFish.id - 1);
     if(matchingValueIndicies < 1) {
-      $("#playerInfo").html("Hunted " + cardToFind + " from " + num + ".<br>GO FISH!");
+      $("#playerInfo").html("Hunted " + cardToFind + " from " + num + ". GO FISH!");
     } else {
-      $("#playerInfo").html("Hunted " + cardToFind + " from " + num + ".<br>Gained " + matchingValueIndicies.length + " cards!");
+      $("#playerInfo").html("Hunted " + cardToFind + " from " + num + ". Gained " + matchingValueIndicies.length + " cards!");
     }
   }
 }
