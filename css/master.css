@@ -2,6 +2,21 @@
   border: 1px solid red;
 } */
 
+body {
+  margin: 0px;
+  background-color: green;
+  color: white;
+  border: 5px solid gold;
+  border-bottom: 0px;
+}
+
+button {
+  height: 30px;
+  width: 100px;
+  border-top-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
 .center {
   /* display: block; */
   text-align: center;
@@ -12,19 +27,27 @@
   padding-right: 5px;
   width: 200px;
   margin: 5px;
-  border: 1px black inset;
+  border: 5px ridge black;
   /* justify-content: space-around; */
 }
 
 .card {
   width: 100px;
   /* height: 200px; */
+  border: 1px solid black;
   justify-content: space-around;
+}
+
+.card:hover {
+  position: relative;
+  top: -10px;
 }
 
 #cardContainer {
   /* display: flex; */
   flex-wrap: nowrap;
+  border: 3px solid gold;
+  border-bottom: 0px;
 }
 
 #opponentContainer {

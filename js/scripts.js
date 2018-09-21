@@ -6,7 +6,6 @@ var searchPlayer = "x";
 $(document).ready(function () {
   $("#startButton").click(buttonPress);
   $("#makeCard").click(makeCard);
-  $("#drawCard").click(drawCard);
   $("#continue").click(moveOn);
   $("#cardContainer").on("click", ".card", function () {
     cardPress(this);
@@ -18,6 +17,8 @@ $(document).ready(function () {
 
 function moveOn() {
   if(gameActive) {
+    console.log("MoveOnPressed");
+    console.log(searchValue, searchPlayer);
     playGame(searchValue, searchPlayer);
   }
 }
@@ -81,6 +82,7 @@ function buttonPress() {
   // var playDeck = new Deck();
   if(!gameActive) {
     dealer = new Dealer(requestPlayers());
+    sounds = new Sounds();
     gameActive = true;
     alert("Hands dealt, ready to play.\n Click to begin.");
   }
@@ -100,15 +102,31 @@ function playGame(playerInputValue, playerInputOpponent) {
 
     var canTakeTurn = playerTakingTurn.takeTurn();
 
+    // Overrides autoplay with human interraction
     if (canTakeTurn === 2) {
       console.log("HUMAN TAKES A TURN");
       console.log("Search Value: " + playerInputValue);
       console.log("Search Player INDEX: " + playerInputOpponent);
+      if(playerTakingTurn.getHand() > 1) {
+        // If player cannot draw a card because deck is empty
+        if(!dealer.dealCard(playerTakingTurn)) {
+          // Skip player, there is nothing else they can do
+          console.log("DECK EMPTY");
+          $("#playerInfo").html("Deck is empty. Please continue to end.")
+          $("#continue").html("Continue");
+          continue;
+        }
+      }
+
       // Switch value to int (collected as string from image)
       var valueToSearch = parseInt(playerInputValue);
       var opponentToSearch = dealer.players[playerInputOpponent];
       instigateCall(valueToSearch, opponentToSearch, playerTakingTurn);
       resetSearchValues();
+
+      if(playerTakingTurn.getHand() > 1) {
+        $("#continue").html("Draw Card");
+      }
       continue;
     }
 
@@ -144,8 +162,6 @@ function playGame(playerInputValue, playerInputOpponent) {
     console.log(dealer.players[i].hand);
   }
   console.log(dealer.playDeck);
-  playerInputValue = null;
-  playerInputOpponent = null;
 
   if(!dealer.checkWinCondition()) {
     console.log("GAME OVER!");
@@ -168,7 +184,7 @@ function playGame(playerInputValue, playerInputOpponent) {
     for (var i = 0; i < winnersArray.length; i++) {
       console.log("PLAYER " + dealer.players[winnersArray[i]].id + " WINS!");
       if(dealer.players[winnersArray[i]].id > 1) {
-        $("#cardContainer").append("<h3>OPPONENT " + dealer.players[winnersArray[i]].id-1 + " WINS!</h3>");
+        $("#cardContainer").append("<h3>OPPONENT " + (dealer.players[winnersArray[i]].id - 1) + " WINS!</h3>");
       } else {
         $("#cardContainer").append("<h3>YOU WIN!</h3>");
       }
@@ -229,17 +245,17 @@ function instigateCall(cardToFind, playerToFish, playerTakingTurn) {
     }
 
     if(matchingValueIndicies < 1) {
-      $(".actionExplain").eq((playerTakingTurn.id - 2)).html("Fished " + cardToFind + " from " + num + ". GO FISH!");
+      $(".actionExplain").eq((playerTakingTurn.id - 2)).html("Hunted " + cardToFind + " from " + num + ".<br>GO FISH!");
     } else {
-      $(".actionExplain").eq(playerTakingTurn.id - 2).html("Fished " + cardToFind + " from " + num + ". Gained " + matchingValueIndicies.length + " cards!");
+      $(".actionExplain").eq(playerTakingTurn.id - 2).html("Hunted " + cardToFind + " from " + num + ".<br>Gained " + matchingValueIndicies.length + " cards!");
     }
 
   } else {
     num = "Opponent " + (playerToFish.id - 1);
     if(matchingValueIndicies < 1) {
-      $("#playerInfo").html("Fished " + cardToFind + " from " + num + ". GO FISH!");
+      $("#playerInfo").html("Hunted " + cardToFind + " from " + num + ".<br>GO FISH!");
     } else {
-      $("#playerInfo").html("Fished " + cardToFind + " from " + num + ". Gained " + matchingValueIndicies.length + " cards!");
+      $("#playerInfo").html("Hunted " + cardToFind + " from " + num + ".<br>Gained " + matchingValueIndicies.length + " cards!");
     }
   }
 }
@@ -463,8 +479,6 @@ class Dealer {
     return this.playDeck.getCard();
   }
 
-  // Checks if all cards have left deck
-  // If true
   // Checks if all sets are down
   // If true
   // Player with most sets wins
@@ -550,6 +564,9 @@ class Player {
     if(this.human) {
       this.humanController.populateCardContainer(this.getHand());
     }
+
+    // Checks hand again to ensure there are cards still in hand
+    this.checkHand();
     return removedCards;
   }
 
@@ -603,7 +620,15 @@ class Player {
   checkHand() {
     var currentValue = 0;
     var valueCount = 1;
+    if(this.hand.length < 1 && this.human) {
+      this.humanController.emptyHand();
+      console.log("Hand is empty!");
+      return;
+    } else if(this.human) {
+      this.humanController.fullHand();
+    }
 
+    // Checks for sets of 4
     for (var i = 0; i < this.hand.length; i++) {
       if (this.hand[i].value !== currentValue) {
         currentValue = this.hand[i].value;
@@ -612,6 +637,9 @@ class Player {
         valueCount++;
       }
 
+      // If 4 matching values are FOUND
+      // Removes the latest value, and the 3 preceding
+      // This works because the deck is always sorted
       if(valueCount === 4) {
         console.log("FOUND SET, value: " + this.hand[i].value);
         var set = this.hand[i].value;
@@ -634,13 +662,45 @@ class Player {
     var setsString = "";
     if(this.human) {
       for (var i = 0; i < this.sets.length; i++) {
-        var toAdd = " |" + this.sets[i] + "| ";
+        var toAdd = " |" + this.sets[i] + "s| ";
+
+        switch (this.sets[i]) {
+          case 11:
+            toAdd = " |Jacks| ";
+            break;
+          case 12:
+            toAdd = " |Queens| ";
+            break;
+          case 13:
+            toAdd = " |Kings| ";
+            break;
+          case 1:
+            toAdd = " |Aces| ";
+            break;
+          default:
+        }
         setsString += toAdd;
       }
       $('#humanSets').html(setsString);
     } else {
       for (var i = 0; i < this.sets.length; i++) {
-        var toAdd = " |" + this.sets[i] + "| ";
+        var toAdd = " |" + this.sets[i] + "s| ";
+
+        switch (this.sets[i]) {
+          case 11:
+            toAdd = " |Jacks| ";
+            break;
+          case 12:
+            toAdd = " |Queens| ";
+            break;
+          case 13:
+            toAdd = " |Kings| ";
+            break;
+          case 1:
+            toAdd = " |Aces| ";
+            break;
+          default:
+        }
         setsString += toAdd;
       }
       console.log("MADE IT HERE!");
@@ -657,6 +717,7 @@ class Player {
   }
 }
 
+// Human
 class Human {
   constructor() {
     this.cardContainer;
@@ -682,5 +743,23 @@ class Human {
 
   addCardToContainer(card) {
     $("#cardContainer").append("<img class=\"card\" src=\"" + card.image + "\" value=\"" + card.value + "\" alt=\"A card\">");
+  }
+
+  emptyHand() {
+    $("#continue").html("Draw Card");
+    searchValue = "drawCard";
+    searchPlayer = "drawCard";
+  }
+
+  fullHand() {
+    $("#continue").html("Take Turn");
+    searchValue = "x";
+    searchPlayer = "x";
+  }
+}
+
+class Sounds {
+  constructor() {
+
   }
 }
